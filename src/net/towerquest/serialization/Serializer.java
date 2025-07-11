@@ -12,7 +12,7 @@ public class Serializer {
 	
 	public SerializedDataType encode(Object obj) {
 		for (TypeHandler th : typeHandlers) {
-			if (th.canHandle(obj)) {
+			if (th.canEncode(obj)) {
 				return th.encode(obj, this);
 			}
 		}

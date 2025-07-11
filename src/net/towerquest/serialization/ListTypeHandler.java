@@ -1,13 +1,14 @@
 package net.towerquest.serialization;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class ListTypeHandler implements TypeHandler<Object, ListType>{
 
 	@Override
-	public boolean canHandle(Object obj) {
+	public boolean canEncode(Object obj) {
 		return obj.getClass().isArray() || obj instanceof Collection;
 	}
 
@@ -30,6 +31,23 @@ public class ListTypeHandler implements TypeHandler<Object, ListType>{
 			}
 		}
 		return destList;
+	}
+
+	@Override
+	public boolean canDecode(Field f, ListType data) {
+		return (f.getType().isArray() || Collection.class.isAssignableFrom(f.getType()));
+	}
+
+	@Override
+	public Object decode(Field f, ListType data, Deserializer parent) {
+		List<Object> list = new ArrayList<Object>();
+		for (SerializedDataType i : data.values) {
+			list.add(parent.decode(f, i));
+		}
+		if (f.getType().isArray())
+			return list.toArray();
+		else
+			return list;
 	}
 
 }

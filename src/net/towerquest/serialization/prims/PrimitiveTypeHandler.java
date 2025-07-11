@@ -2,13 +2,13 @@ package net.towerquest.serialization.prims;
 
 import java.lang.reflect.Field;
 
-import net.towerquest.serialization.SerializedDataType;
+import net.towerquest.serialization.Deserializer;
 import net.towerquest.serialization.Serializer;
 import net.towerquest.serialization.TypeHandler;
 
 public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive> {
 	@Override
-	public boolean canHandle(Object obj) {
+	public boolean canEncode(Object obj) {
 		Class<?> type = obj.getClass();
 		return (type.isPrimitive() || (
 				obj instanceof Boolean ||
@@ -39,6 +39,22 @@ public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive> {
 			return new PrimShort((Short)obj);
 		if(obj instanceof String)
 			return new PrimString((String)obj);
+		return null;
+	}
+
+	@Override
+	public boolean canDecode(Field f, Primitive data) {
+		Class<?> type = f.getType();
+		return (type.isPrimitive() || 
+				type == Boolean.class ||
+				type == Byte.class ||
+				type == Double.class
+				);
+	}
+
+	@Override
+	public Object decode(Field f, Primitive data, Deserializer parent) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

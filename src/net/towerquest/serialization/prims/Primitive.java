@@ -6,25 +6,22 @@ public abstract class Primitive implements SerializedDataType {
 	/**
 	 * Does not handle arrays (literally 1984)
 	 */
-	public static Class<? extends Primitive> getPrimitiveClassFromType(Class<?> type) {
-		if(!type.isPrimitive())
-			return null;
-		if(type == Boolean.TYPE)
+	public static Class<? extends Primitive> getPrimitiveClassFromType(Class<?> clazz) {
+		if (clazz == Boolean.TYPE || clazz == Boolean.class)
 			return PrimBoolean.class;
-		if(type == Byte.TYPE)
+		if (clazz == Byte.TYPE || clazz == Byte.class)
 			return PrimByte.class;
-		if(type == Double.TYPE)
+		if (clazz == Double.TYPE || clazz == Double.class)
 			return PrimDouble.class;
-		if(type == Float.TYPE)
+		if (clazz == Float.TYPE || clazz == Float.class)
 			return PrimFloat.class;
-		if(type == Integer.TYPE)
+		if (clazz == Integer.TYPE || clazz == Integer.class)
 			return PrimInt.class;
-		if(type == Long.TYPE)
+		if (clazz == Long.TYPE || clazz == Long.class)
 			return PrimLong.class;
-		if(type == Short.TYPE)
+		if (clazz == Short.TYPE || clazz == Short.class)
 			return PrimShort.class;
-		// java stirng ca
-		if(type == String.class)
+		if (clazz == String.class)
 			return PrimString.class;
 		return null;
 	}
