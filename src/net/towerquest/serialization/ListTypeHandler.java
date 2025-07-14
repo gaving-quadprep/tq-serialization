@@ -21,14 +21,17 @@ public class ListTypeHandler implements TypeHandler<Object, ListType>{
 			Object[] sourceList = (Object[])obj;
 			
 			for (int i = 0; i < sourceList.length; i++) {
-				destList.values.add(parent.encode(sourceList[i]));
+				Object value = sourceList[i];
+				if (value != null)
+					destList.values.add(parent.encode(value));
+				else
+					destList.values.add(null);
 			}
 			
 		} else {
 			assert obj instanceof Collection;
-			for (Object i : (Collection)obj) {
+			for (Object i : (Collection)obj)
 				destList.values.add(parent.encode(i));
-			}
 		}
 		return destList;
 	}
@@ -41,13 +44,11 @@ public class ListTypeHandler implements TypeHandler<Object, ListType>{
 	@Override
 	public Object decode(Field f, ListType data, Deserializer parent) {
 		List<Object> list = new ArrayList<Object>();
-		for (SerializedDataType i : data.values) {
+		for (SerializedDataType i : data.values)
 			list.add(parent.decode(f, i));
-		}
 		if (f.getType().isArray())
 			return list.toArray();
 		else
 			return list;
 	}
-
 }

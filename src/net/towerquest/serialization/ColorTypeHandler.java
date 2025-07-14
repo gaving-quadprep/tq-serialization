@@ -8,7 +8,7 @@ import net.towerquest.serialization.prims.PrimInt;
 public class ColorTypeHandler implements TypeHandler<Color, SerializedData> {
 
 	@Override
-	public boolean canEncode(Color obj) {
+	public boolean canEncode(Object obj) {
 		return (obj instanceof Color);
 	}
 

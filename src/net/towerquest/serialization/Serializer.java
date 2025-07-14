@@ -1,6 +1,7 @@
-	package net.towerquest.serialization;
+package net.towerquest.serialization;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,16 +28,29 @@ public class Serializer {
 		try {
 			for (Field f : fields) {
 				f.setAccessible(true);
-				String name = f.getName();
-				SerializedDataType val = encode(f.get(s));
-				root.values.put(name, val);
+				if (!Modifier.isTransient(f.getModifiers())) {
+					String name = f.getName();
+					Object obj = f.get(s);
+					if (obj != null) {
+						SerializedDataType val = encode(obj);
+						root.values.put(name, val);
+					}
+				}
 				f.setAccessible(false);
 			}
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 		
 		return root;
 		
+	}
+	
+	public Serializer() {
+		typeHandlers.add(new ListTypeHandler());
+		typeHandlers.add(new PrimitiveTypeHandler());
+		typeHandlers.add(new SerializableObjectTypeHandler());
+		typeHandlers.add(new EnumTypeHandler());
+		typeHandlers.add(new ColorTypeHandler());
 	}
 }

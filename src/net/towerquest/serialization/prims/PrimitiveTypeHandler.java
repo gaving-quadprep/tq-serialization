@@ -48,14 +48,18 @@ public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive> {
 		return (type.isPrimitive() || 
 				type == Boolean.class ||
 				type == Byte.class ||
-				type == Double.class
+				type == Double.class ||
+				type == Float.class ||
+				type == Integer.class||
+				type == Long.class||
+				type == Short.class||
+				type == String.class
 				);
 	}
 
 	@Override
 	public Object decode(Field f, Primitive data, Deserializer parent) {
-		// TODO Auto-generated method stub
-		return null;
+		return data.value;
 	}
 
 }

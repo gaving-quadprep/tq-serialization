@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 public class SerializableObjectTypeHandler implements TypeHandler<Serializable, SerializedData> {
 	@Override
-	public boolean canEncode(Serializable obj) {
+	public boolean canEncode(Object obj) {
 		return (obj instanceof Serializable);
 	}
 

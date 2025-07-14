@@ -6,6 +6,9 @@ public abstract class Primitive implements SerializedDataType {
 	/**
 	 * Does not handle arrays (literally 1984)
 	 */
+	
+	public Object value;
+	
 	public static Class<? extends Primitive> getPrimitiveClassFromType(Class<?> clazz) {
 		if (clazz == Boolean.TYPE || clazz == Boolean.class)
 			return PrimBoolean.class;
