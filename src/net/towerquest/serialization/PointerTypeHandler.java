@@ -1,0 +1,37 @@
+package net.towerquest.serialization;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+
+public class PointerTypeHandler implements TypeHandler<Object, PointerValue> {
+
+	@Override
+	public boolean canEncode(Field f, Object obj) {
+		if (f != null) {
+			Annotation[] annotations = f.getAnnotations();
+			for (int i = 0; i < annotations.length; i++)
+				if (annotations[i] instanceof Pointer)
+					return true;
+		}
+		return false;
+	}
+
+	@Override
+	public PointerValue encode(Field f, Object obj, Serializer parent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canDecode(Field f, PointerValue data) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Object decode(Field f, PointerValue data, Deserializer parent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}

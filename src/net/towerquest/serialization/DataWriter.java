@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 public interface DataWriter {
-	public void writeObject(SerializedData data, OutputStream out) throws IOException;
+	public default void writeObject(SerializedData data, OutputStream out) throws IOException {}
 	public void writeData(SerializedDataType data, OutputStream out) throws IOException;
+	public void write(SerializedData data, OutputStream out) throws IOException;
 }

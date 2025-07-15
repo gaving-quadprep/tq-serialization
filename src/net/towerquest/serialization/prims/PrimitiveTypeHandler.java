@@ -8,7 +8,7 @@ import net.towerquest.serialization.TypeHandler;
 
 public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive> {
 	@Override
-	public boolean canEncode(Object obj) {
+	public boolean canEncode(Field f, Object obj) {
 		Class<?> type = obj.getClass();
 		return (type.isPrimitive() || (
 				obj instanceof Boolean ||
@@ -22,7 +22,7 @@ public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive> {
 	}
 
 	@Override
-	public Primitive encode(Object obj, Serializer parent) {
+	public Primitive encode(Field f, Object obj, Serializer parent) {
 		if(obj instanceof Boolean)
 			return new PrimBoolean((Boolean)obj);
 		if(obj instanceof Byte)

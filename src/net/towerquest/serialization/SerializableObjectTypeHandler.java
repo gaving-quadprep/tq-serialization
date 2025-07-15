@@ -4,12 +4,12 @@ import java.lang.reflect.Field;
 
 public class SerializableObjectTypeHandler implements TypeHandler<Serializable, SerializedData> {
 	@Override
-	public boolean canEncode(Object obj) {
+	public boolean canEncode(Field f, Object obj) {
 		return (obj instanceof Serializable);
 	}
 
 	@Override
-	public SerializedData encode(Serializable obj, Serializer parent) {
+	public SerializedData encode(Field f, Serializable obj, Serializer parent) {
 		return parent.serialize(obj);
 	}
 

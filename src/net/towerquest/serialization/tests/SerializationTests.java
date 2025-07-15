@@ -8,6 +8,7 @@ import net.towerquest.serialization.JSONWriter;
 import net.towerquest.serialization.DataWriter;
 import net.towerquest.serialization.SerializedData;
 import net.towerquest.serialization.Serializer;
+import net.towerquest.serialization.XMLWriter;
 
 public class SerializationTests {
 
@@ -16,11 +17,11 @@ public class SerializationTests {
 		ExampleObj1 object = new ExampleObj1();
 		Serializer serializer = new Serializer();
 		SerializedData data = serializer.serialize(object);
-		
-		DataWriter dataWriter = new JSONWriter();
+
+		DataWriter dataWriter = new XMLWriter();
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
-			dataWriter.writeObject(data, output);
+			dataWriter.write(data, output);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -7,20 +7,33 @@ import net.towerquest.serialization.Serializable;
 
 public class ExampleObj1 implements Serializable {
 	
-	public transient int shouldntBeSerialized = 2;
+	enum Language {
+		JAVA, JAVASCRIPT, C, PYTHON;
+	};
 	
-	public String name = "\\ \" \n \t {;}";
-	private double asdf = 4.000000000000001;
+	public transient int shouldntBeSerialized = 2;
+	public static byte alsoShouldNotBeSerialized = 27;
+	
+	public String name = "\\ \" \n \t <&>";
+	private final double asdf = 4.000000000000001;
 	float jkl;
 	
 	float one = 1.0f;
+	Double notZero;
 	
+	boolean isThisLibraryGoingToWork = true;
+	
+	ExampleObj2 exObject;
 	protected ExampleObj2[] list;
 	
 	@ScaleBy(7)
 	float scale = (1f/7f);
 	
 	int notNull = 0;
+	String isThisGoingToBeReadyOnTime = "false";
+	
+	Language whatThisIsWrittenIn = Language.JAVA;
+	Language otherLanguage;
 	
 	public ExampleObj1() {
 		ExampleObj2 obj2 = new ExampleObj2();
@@ -34,6 +47,8 @@ public class ExampleObj1 implements Serializable {
 		otherObj2.name = "";
 		otherObj2.value = -34;
 		otherObj2.otherValue = null;
+		
+		exObject = obj2;
 		
 		this.list = new ExampleObj2[] {obj2, null, otherObj2};
 	}

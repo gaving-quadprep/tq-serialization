@@ -7,12 +7,12 @@ import net.towerquest.serialization.prims.PrimString;
 public class EnumTypeHandler implements TypeHandler<Enum, SerializedDataType> {
 
 	@Override
-	public boolean canEncode(Object obj) {
+	public boolean canEncode(Field f, Object obj) {
 		return (obj instanceof Enum);
 	}
 
 	@Override
-	public SerializedDataType encode(Enum obj, Serializer parent) {
+	public SerializedDataType encode(Field f, Enum obj, Serializer parent) {
 		return new PrimString(obj.name());
 	}
 

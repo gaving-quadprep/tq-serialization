@@ -11,10 +11,10 @@ public class Serializer {
 	
 	private List<TypeHandler> typeHandlers = new ArrayList<TypeHandler>();
 	
-	public SerializedDataType encode(Object obj) {
+	public SerializedDataType encode(Field f, Object obj) {
 		for (TypeHandler th : typeHandlers) {
-			if (th.canEncode(obj)) {
-				return th.encode(obj, this);
+			if (th.canEncode(f, obj)) {
+				return th.encode(f, obj, this);
 			}
 		}
 		return null;
@@ -32,7 +32,7 @@ public class Serializer {
 					String name = f.getName();
 					Object obj = f.get(s);
 					if (obj != null) {
-						SerializedDataType val = encode(obj);
+						SerializedDataType val = encode(f, obj);
 						root.values.put(name, val);
 					}
 				}

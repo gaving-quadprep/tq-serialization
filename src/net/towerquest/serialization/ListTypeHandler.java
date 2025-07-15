@@ -8,12 +8,12 @@ import java.util.List;
 public class ListTypeHandler implements TypeHandler<Object, ListType>{
 
 	@Override
-	public boolean canEncode(Object obj) {
+	public boolean canEncode(Field f, Object obj) {
 		return obj.getClass().isArray() || obj instanceof Collection;
 	}
 
 	@Override
-	public ListType encode(Object obj, Serializer parent) {
+	public ListType encode(Field f, Object obj, Serializer parent) {
 		Class<?> type = obj.getClass();
 		ListType destList = new ListType();
 		if (type.isArray()) {
@@ -23,7 +23,7 @@ public class ListTypeHandler implements TypeHandler<Object, ListType>{
 			for (int i = 0; i < sourceList.length; i++) {
 				Object value = sourceList[i];
 				if (value != null)
-					destList.values.add(parent.encode(value));
+					destList.values.add(parent.encode(null, value));
 				else
 					destList.values.add(null);
 			}
@@ -31,7 +31,7 @@ public class ListTypeHandler implements TypeHandler<Object, ListType>{
 		} else {
 			assert obj instanceof Collection;
 			for (Object i : (Collection)obj)
-				destList.values.add(parent.encode(i));
+				destList.values.add(parent.encode(null, i));
 		}
 		return destList;
 	}
