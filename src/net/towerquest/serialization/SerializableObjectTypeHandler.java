@@ -10,7 +10,7 @@ public class SerializableObjectTypeHandler implements TypeHandler<Serializable, 
 
 	@Override
 	public SerializedData encode(Field f, Serializable obj, Serializer parent) {
-		return parent.serialize(obj);
+		return parent.serializeObject(obj);
 	}
 
 	@Override

@@ -15,7 +15,8 @@ public class ExampleObj1 implements Serializable {
 	public static byte alsoShouldNotBeSerialized = 27;
 	
 	public String name = "\\ \" \n \t <&>";
-	private final double asdf = 4.000000000000001;
+	
+	private final double asdf = -4.000000000000001;
 	float jkl;
 	
 	float one = 1.0f;
@@ -23,16 +24,21 @@ public class ExampleObj1 implements Serializable {
 	
 	boolean isThisLibraryGoingToWork = true;
 	
-	ExampleObj2 exObject;
+	ExampleObj2 exampleObject;
 	protected ExampleObj2[] list;
-	
+
+	// Should be 1
 	@ScaleBy(7)
 	float scale = (1f/7f);
-	
+
+	// Should be 0
 	int notNull = 0;
+	// Should be "false"
 	String isThisGoingToBeReadyOnTime = "false";
 	
+	// Should be "JAVA"
 	Language whatThisIsWrittenIn = Language.JAVA;
+	// Should not be saved
 	Language otherLanguage;
 	
 	public ExampleObj1() {
@@ -48,7 +54,7 @@ public class ExampleObj1 implements Serializable {
 		otherObj2.value = -34;
 		otherObj2.otherValue = null;
 		
-		exObject = obj2;
+		exampleObject = obj2;
 		
 		this.list = new ExampleObj2[] {obj2, null, otherObj2};
 	}

@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import net.towerquest.serialization.prims.*;
 
 public class XMLWriter extends StringDataWriter {
-	private final static PrimString blank = new PrimString("");
 	// fun fact: i specifically called the parameter "s", not "str" or "string", so that the .replace function would be aligned
 	@Override
 	public String escape(String s) {

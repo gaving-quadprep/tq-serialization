@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public interface DataReader {
-	public SerializedData readObject(InputStream reader) throws IOException;
-	public SerializedDataType readData(InputStream stream) throws IOException;
+	public SerializedData readObject(InputStream in) throws IOException;
+	public SerializedDataType readData(InputStream in) throws IOException;
+	public SerializedData read(InputStream in) throws IOException;
 }

@@ -9,13 +9,9 @@ public abstract class SerializationUtils {
 	public static <T extends Serializable> List<Field> getAllFields(Class<T> clazz) {
 		Field[] fields = clazz.getDeclaredFields();
 		List<Field> fieldList = new ArrayList<Field>();
-		for (Field f : fields) {
-			if (!Modifier.isStatic(f.getModifiers())) {
+		for (Field f : fields)
+			if (!Modifier.isStatic(f.getModifiers()))
 				fieldList.add(f);
-				System.out.println(f);
-			}
-					
-		}
 		Class<T> superClass = (Class<T>) clazz.getSuperclass();
 		if (superClass != Object.class)
 			fieldList.addAll(getAllFields(superClass));
