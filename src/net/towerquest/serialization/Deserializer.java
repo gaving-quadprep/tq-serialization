@@ -20,12 +20,12 @@ public class Deserializer {
 		}
 		return null;
 	}
-	public <T extends Serializable> T deserializeObject(Class<T> clazz, SerializedDataType sdt) {
+	public <T extends Serializable> T deserializeObject(Class<T> clazz, SerializedData sd) {
 		// I'm hungry
 		Constructor<T>[] constructors = (Constructor<T>[]) clazz.getConstructors();
 		assert constructors.length > 0 : "An object must have constructors to be deserialized";
 		
-		T t;
+		T t = null;
 		for (Constructor c : constructors) {
 			c.setAccessible(true);
 			if (c.getParameterCount() == 0) {
@@ -41,18 +41,34 @@ public class Deserializer {
 			c.setAccessible(false);
 		}
 		
+		assert t != null : "No constructors without parameters found";
 		
 		for (Field f : SerializationUtils.getAllFields(clazz)) {
 			f.setAccessible(true);
 			if (!Modifier.isTransient(f.getModifiers())) {
+				PreviousName prevName = f.getAnnotation(PreviousName.class);
+				String fieldName;
+				if (prevName != null)
+					fieldName = prevName.value();
+				else
+					fieldName = f.getName();
 				
+				Object decoded = decode(f, sd.get(fieldName));
+				if (decoded != null) {
+					try {
+						f.set(t, decoded);
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 			f.setAccessible(false);
 		}
 		
-		return null;
+		return t;
 	}
-	public Serializable deserialize(SerializedDataType sdt) {
-		return null;
+	public <T extends Serializable> T deserialize(SerializedData sdt, Class<T> type) {
+		return deserializeObject(type, sdt);
 	}
 }

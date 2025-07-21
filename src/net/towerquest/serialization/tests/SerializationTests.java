@@ -26,12 +26,13 @@ public class SerializationTests {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
 			dataWriter.write(data, output);
-			System.out.println(output.toString());
 			SerializedData data2 = dataReader.read(new ByteArrayInputStream(output.toByteArray()));
-			//output.reset();
-			//dataWriter.write(data2, output);
-			//System.out.println(output.toString());
-			ExampleObj1 otherObject = (ExampleObj1) deserializer.deserialize(data2);
+			ExampleObj1 otherObject = deserializer.deserialize(data2, ExampleObj1.class);
+			SerializedData data3 = serializer.serialize(otherObject);
+			output.reset();
+			dataWriter.write(data3, output);
+			System.out.println(output.toString());
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

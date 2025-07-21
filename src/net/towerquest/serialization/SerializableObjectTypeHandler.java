@@ -20,7 +20,7 @@ public class SerializableObjectTypeHandler implements TypeHandler<Serializable, 
 
 	@Override
 	public Serializable decode(Field f, SerializedData data, Deserializer parent) {
-		return 	parent.deserialize(data);
+		return parent.deserialize(data, (Class<Serializable>) f.getType());
 	}
 
 }
