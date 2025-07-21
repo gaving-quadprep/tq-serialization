@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import net.towerquest.serialization.prims.*;
 
@@ -13,13 +14,24 @@ public class Serializer {
 	
 	private List<TypeHandler> typeHandlers = new ArrayList<TypeHandler>();
 	
+	private List<Runnable> functionsToRun = new ArrayList<Runnable>();
+	
 	private Map<Object, SerializedDataType> objectMap = new HashMap<Object, SerializedDataType>();
+	
+	public void runAfterSerializing(Runnable function) {
+		 functionsToRun.add(function);
+	}
+	
+	public SerializedDataType getEncodedDataLocation(Object obj) {
+		return objectMap.get(obj);
+	}
 	
 	public SerializedDataType encode(Field f, Object obj) {
 		for (TypeHandler th : typeHandlers) {
 			if (th.canEncode(f, obj)) {
 				SerializedDataType ret = th.encode(f, obj, this);
-				objectMap.putIfAbsent(obj, ret);
+				if (!(ret instanceof PointerValue))
+					objectMap.putIfAbsent(obj, ret);
 				return ret;
 			}
 		}
@@ -27,8 +39,7 @@ public class Serializer {
 	}
 	
 	
-	
-	public SerializedData serializeObject(Serializable s) {
+	SerializedData serializeObject(Serializable s) {
 		SerializedData root = new SerializedData();
 		
 		List<Field> fields = SerializationUtils.getAllFields(s.getClass());
@@ -53,9 +64,15 @@ public class Serializer {
 		return root;
 		
 	}
+	
 	public SerializedData serialize(Serializable s) {
 		objectMap.clear();
-		return serializeObject(s);
+		functionsToRun.clear();
+		SerializedData ret = serializeObject(s);
+		for (Runnable r : functionsToRun) {
+			r.run();
+		}
+		return ret;
 	}
 	
 	public Serializer() {

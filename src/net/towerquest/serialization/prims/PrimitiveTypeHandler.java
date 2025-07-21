@@ -23,6 +23,7 @@ public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive> {
 
 	@Override
 	public Primitive encode(Field f, Object obj, Serializer parent) {
+		//f.getAnnotationsByType(ScaleBy.class)
 		if(obj instanceof Boolean)
 			return new PrimBoolean((Boolean)obj);
 		if(obj instanceof Byte)
@@ -50,11 +51,10 @@ public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive> {
 				type == Byte.class ||
 				type == Double.class ||
 				type == Float.class ||
-				type == Integer.class||
-				type == Long.class||
-				type == Short.class||
-				type == String.class
-				);
+				type == Integer.class ||
+				type == Long.class ||
+				type == Short.class ||
+				type == String.class);
 	}
 
 	@Override

@@ -18,8 +18,11 @@ public class PointerTypeHandler implements TypeHandler<Object, PointerValue> {
 
 	@Override
 	public PointerValue encode(Field f, Object obj, Serializer parent) {
-		// TODO Auto-generated method stub
-		return null;
+		PointerValue ret = new PointerValue();
+		parent.runAfterSerializing(() -> {
+			ret.value = parent.getEncodedDataLocation(obj);
+		});
+		return ret;
 	}
 
 	@Override

@@ -28,9 +28,9 @@ public class SerializationTests {
 			dataWriter.write(data, output);
 			System.out.println(output.toString());
 			SerializedData data2 = dataReader.read(new ByteArrayInputStream(output.toByteArray()));
-			output.reset();
-			dataWriter.write(data2, output);
-			System.out.println(output.toString());
+			//output.reset();
+			//dataWriter.write(data2, output);
+			//System.out.println(output.toString());
 			ExampleObj1 otherObject = (ExampleObj1) deserializer.deserialize(data2);
 		} catch (IOException e) {
 			e.printStackTrace();

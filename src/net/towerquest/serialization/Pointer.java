@@ -1,5 +1,10 @@
 package net.towerquest.serialization;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Used in an {@code Serializable} to specify that, instead of serializing the field within the object,
  * it should keep it seperate, and just add a link to it.
@@ -13,6 +18,9 @@ package net.towerquest.serialization;
  * If it uses the Pointer annotation, and someone tries to change its color, it will change the colors
  * of all other entities.
  */
+
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Pointer {
 	
 }

@@ -2,6 +2,7 @@ package net.towerquest.serialization.tests;
 
 import java.awt.Color;
 
+import net.towerquest.serialization.Pointer;
 import net.towerquest.serialization.Serializable;
 
 public class ExampleObj2 implements Serializable {
@@ -9,4 +10,5 @@ public class ExampleObj2 implements Serializable {
 	long value;
 	Long otherValue;
 	Color color;
+	@Pointer ExampleObj2 pointer;
 }

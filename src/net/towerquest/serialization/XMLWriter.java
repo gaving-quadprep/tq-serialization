@@ -111,6 +111,9 @@ public class XMLWriter extends StringDataWriter {
 			}
 			indent(out, indentation);
 		}
+		if (data instanceof PointerValue) {
+			// /tqs/value1
+		}
 	}
 
 	@Override

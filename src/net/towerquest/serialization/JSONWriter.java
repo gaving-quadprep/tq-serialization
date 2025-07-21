@@ -1,13 +1,17 @@
 package net.towerquest.serialization;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import net.towerquest.serialization.prims.*;
 
 public class JSONWriter extends StringDataWriter {
+	private Map<SerializedDataType, String> paths = new HashMap<SerializedDataType, String>();
+	
 	// i stole this from stack overflow because i'm too lazy to add a library
 	@Override
 	public String escape(String raw) {
@@ -70,14 +74,36 @@ public class JSONWriter extends StringDataWriter {
 			writer.write("]");
 		}
 		if (data instanceof PointerValue) {
-			// TODO set some sort of id because json doesn't support pointers
+			String path2 = paths.get(((PointerValue)data).value);
+			if (path2 != null)
+				writeString(writer, path2);
 		}
 		if (data == null)
 			writer.write("null");
 	}
 
+	// we need to know the path to each object before serializing it
+	private void traverse(SerializedDataType sdt, String path) {
+		paths.putIfAbsent(sdt, path);
+		if (sdt instanceof SerializedData) {
+			for (Entry<String, SerializedDataType> entry : 
+				((SerializedData)sdt).values.entrySet()) {
+				traverse(entry.getValue(), path + "/" + entry.getKey());
+			}
+		}
+		if (sdt instanceof ListType) {
+			List<SerializedDataType> values = ((ListType)sdt).values;
+			for (int i = 0; i < values.size(); i++) {
+				traverse(values.get(i), path + "/" + String.valueOf(i));
+			}
+		}
+	}
+	
+
 	@Override
 	public void write(SerializedData data, Writer out) throws IOException {
+		paths.clear();
+		traverse(data, "");
 		writeObject(data, out);
 	}
 }
