@@ -3,8 +3,9 @@ package net.towerquest.serialization;
 import java.lang.reflect.Field;
 
 import net.towerquest.serialization.prims.PrimString;
+import net.towerquest.serialization.prims.Primitive;
 
-public class EnumTypeHandler implements TypeHandler<Enum, SerializedDataType> {
+public class EnumTypeHandler implements TypeHandler<Enum<?>, Primitive, Primitive> {
 
 	@Override
 	public boolean canEncode(Field f, Object obj) {
@@ -12,7 +13,7 @@ public class EnumTypeHandler implements TypeHandler<Enum, SerializedDataType> {
 	}
 
 	@Override
-	public SerializedDataType encode(Field f, Enum obj, Serializer parent) {
+	public Primitive encode(Field f, Enum<?> obj, Serializer parent) {
 		return new PrimString(obj.name());
 	}
 
@@ -22,7 +23,7 @@ public class EnumTypeHandler implements TypeHandler<Enum, SerializedDataType> {
 	}
 
 	@Override
-	public Enum decode(Field f, SerializedDataType data, Deserializer parent) {
+	public Enum<?> decode(Field f, Primitive data, Deserializer parent) {
 		return Enum.valueOf((Class<Enum>) f.getType(), ((PrimString)data).value);
 	}
 	

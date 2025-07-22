@@ -2,7 +2,7 @@ package net.towerquest.serialization;
 
 import java.lang.reflect.Field;
 
-public class SerializableObjectTypeHandler implements TypeHandler<Serializable, SerializedData> {
+public class SerializableObjectTypeHandler implements TypeHandler<Serializable, SerializedData, SerializedData> {
 	@Override
 	public boolean canEncode(Field f, Object obj) {
 		return (obj instanceof Serializable);
@@ -14,8 +14,8 @@ public class SerializableObjectTypeHandler implements TypeHandler<Serializable, 
 	}
 
 	@Override
-	public boolean canDecode(Field f, SerializedData data) {
-		return Serializable.class.isAssignableFrom(f.getType());
+	public boolean canDecode(Field f, SerializedDataType data) {
+		return Serializable.class.isAssignableFrom(f.getType()) && data instanceof SerializedData;
 	}
 
 	@Override

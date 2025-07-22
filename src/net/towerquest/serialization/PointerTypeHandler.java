@@ -3,7 +3,7 @@ package net.towerquest.serialization;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-public class PointerTypeHandler implements TypeHandler<Object, PointerValue> {
+public class PointerTypeHandler implements TypeHandler<Object, PointerValue, PointerValue> {
 
 	@Override
 	public boolean canEncode(Field f, Object obj) {
@@ -26,9 +26,8 @@ public class PointerTypeHandler implements TypeHandler<Object, PointerValue> {
 	}
 
 	@Override
-	public boolean canDecode(Field f, PointerValue data) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean canDecode(Field f, SerializedDataType data) {
+		return data instanceof PointerValue;
 	}
 
 	@Override

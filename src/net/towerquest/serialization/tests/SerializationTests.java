@@ -11,17 +11,20 @@ import net.towerquest.serialization.JSONReader;
 import net.towerquest.serialization.JSONWriter;
 import net.towerquest.serialization.SerializedData;
 import net.towerquest.serialization.Serializer;
+import net.towerquest.serialization.XMLWriter;
 
 public class SerializationTests {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ExampleObj1 object = new ExampleObj1();
+		object.init();
 		Serializer serializer = new Serializer();
 		Deserializer deserializer = new Deserializer();
 		SerializedData data = serializer.serialize(object);
 
 		DataWriter dataWriter = new JSONWriter();
+		DataWriter dataWriter2 = new XMLWriter();
 		DataReader dataReader = new JSONReader();
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {

@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 
 import net.towerquest.serialization.prims.PrimInt;
 
-public class ColorTypeHandler implements TypeHandler<Color, SerializedData> {
+public class ColorTypeHandler implements TypeHandler<Color, SerializedData, SerializedData> {
 
 	@Override
 	public boolean canEncode(Field f, Object obj) {
@@ -23,7 +23,7 @@ public class ColorTypeHandler implements TypeHandler<Color, SerializedData> {
 	}
 
 	@Override
-	public boolean canDecode(Field f, SerializedData data) {
+	public boolean canDecode(Field f, SerializedDataType data) {
 		return (f.getType() == Color.class);
 	}
 
