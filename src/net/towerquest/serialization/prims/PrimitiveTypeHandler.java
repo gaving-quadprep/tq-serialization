@@ -3,10 +3,11 @@ package net.towerquest.serialization.prims;
 import java.lang.reflect.Field;
 
 import net.towerquest.serialization.Deserializer;
+import net.towerquest.serialization.SerializedDataType;
 import net.towerquest.serialization.Serializer;
 import net.towerquest.serialization.TypeHandler;
 
-public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive> {
+public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive, Primitive> {
 	@Override
 	public boolean canEncode(Field f, Object obj) {
 		Class<?> type = obj.getClass();
@@ -44,7 +45,7 @@ public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive> {
 	}
 
 	@Override
-	public boolean canDecode(Field f, Primitive data) {
+	public boolean canDecode(Field f, SerializedDataType data) {
 		Class<?> type = f.getType();
 		return (type.isPrimitive() || 
 				type == Boolean.class ||

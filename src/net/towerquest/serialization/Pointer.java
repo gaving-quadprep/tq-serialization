@@ -21,6 +21,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@TQSAnnotation
 public @interface Pointer {
 	
 }

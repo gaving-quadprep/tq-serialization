@@ -45,7 +45,11 @@ public class ExampleObj1 implements Serializable {
 	// Should not be saved
 	Language otherLanguage;
 	
-	public ExampleObj1() {
+	public ExampleObj1() {}
+	
+	// to stop the deserialized one from being the same
+	public void init() {
+
 		ExampleObj2 obj2 = new ExampleObj2();
 		// Should be 0 red, 255 green, 255 blue (depending on the java definition)
 		obj2.color = Color.CYAN;

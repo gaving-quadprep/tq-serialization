@@ -2,10 +2,11 @@ package net.towerquest.serialization;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.towerquest.serialization.prims.PrimitiveTypeHandler;
 
 public class Deserializer {
 	
@@ -26,7 +27,7 @@ public class Deserializer {
 		assert constructors.length > 0 : "An object must have constructors to be deserialized";
 		
 		T t = null;
-		for (Constructor c : constructors) {
+		for (Constructor<T> c : constructors) {
 			c.setAccessible(true);
 			if (c.getParameterCount() == 0) {
 				try {
@@ -48,18 +49,26 @@ public class Deserializer {
 			if (!Modifier.isTransient(f.getModifiers())) {
 				PreviousName prevName = f.getAnnotation(PreviousName.class);
 				String fieldName;
-				if (prevName != null)
+				if (prevName != null) {
 					fieldName = prevName.value();
-				else
+				} else {
 					fieldName = f.getName();
-				
-				Object decoded = decode(f, sd.get(fieldName));
-				if (decoded != null) {
-					try {
-						f.set(t, decoded);
-					} catch (IllegalArgumentException | IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				}
+				SerializedDataType fieldData = sd.get(fieldName);
+				System.out.println(fieldData);
+				if (fieldData != null) {
+					Object decoded = decode(f, fieldData);
+					System.out.println(decoded);
+					if (decoded != null) {
+						System.out.println("not null: " + fieldName);
+						try {
+							f.set(t, decoded);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} else {
+						System.out.println("null: " + fieldName);
 					}
 				}
 			}
@@ -70,5 +79,13 @@ public class Deserializer {
 	}
 	public <T extends Serializable> T deserialize(SerializedData sdt, Class<T> type) {
 		return deserializeObject(type, sdt);
+	}
+	public Deserializer() {
+		typeHandlers.add(new PointerTypeHandler());
+		typeHandlers.add(new ListTypeHandler());
+		typeHandlers.add(new PrimitiveTypeHandler());
+		typeHandlers.add(new SerializableObjectTypeHandler());
+		typeHandlers.add(new EnumTypeHandler());
+		typeHandlers.add(new ColorTypeHandler());
 	}
 }
