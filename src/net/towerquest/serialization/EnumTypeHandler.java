@@ -8,23 +8,23 @@ import net.towerquest.serialization.prims.Primitive;
 public class EnumTypeHandler implements TypeHandler<Enum<?>, Primitive, Primitive> {
 
 	@Override
-	public boolean canEncode(Field f, Object obj) {
+	public boolean canEncode(DataContext dc, Object obj) {
 		return (obj instanceof Enum);
 	}
 
 	@Override
-	public Primitive encode(Field f, Enum<?> obj, Serializer parent) {
+	public Primitive encode(DataContext dc, Enum<?> obj, Serializer parent) {
 		return new PrimString(obj.name());
 	}
 
 	@Override
-	public boolean canDecode(Field f, SerializedDataType data) {
-		return (Enum.class.isAssignableFrom(f.getType()));
+	public boolean canDecode(DataContext dc, SerializedDataType data) {
+		return (Enum.class.isAssignableFrom(dc.clazz));
 	}
 
 	@Override
-	public Enum<?> decode(Field f, Primitive data, Deserializer parent) {
-		return Enum.valueOf((Class<Enum>) f.getType(), ((PrimString)data).value);
+	public Enum<?> decode(DataContext dc, Primitive data, Deserializer parent) {
+		return Enum.valueOf((Class<Enum>) dc.clazz, ((PrimString)data).value);
 	}
 	
 }

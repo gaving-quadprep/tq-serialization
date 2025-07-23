@@ -1,5 +1,6 @@
 package net.towerquest.serialization;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -9,12 +10,12 @@ import java.util.List;
 public class ListTypeHandler implements TypeHandler<Object, ListType, ListType>{
 
 	@Override
-	public boolean canEncode(Field f, Object obj) {
+	public boolean canEncode(DataContext dc, Object obj) {
 		return obj.getClass().isArray() || obj instanceof Collection;
 	}
 
 	@Override
-	public ListType encode(Field f, Object obj, Serializer parent) {
+	public ListType encode(DataContext dc, Object obj, Serializer parent) {
 		Class<?> type = obj.getClass();
 		ListType destList = new ListType();
 		if (type.isArray()) {
@@ -38,24 +39,25 @@ public class ListTypeHandler implements TypeHandler<Object, ListType, ListType>{
 	}
 
 	@Override
-	public boolean canDecode(Field f, SerializedDataType data) {
-		if (f != null)
-			return (f.getType().isArray() || List.class.isAssignableFrom(f.getType()))
+	public boolean canDecode(DataContext dc, SerializedDataType data) {
+		if (dc != null)
+			return (dc.clazz.isArray() || List.class.isAssignableFrom(dc.clazz))
 					&& data instanceof ListType;
 		return data instanceof ListType;
 	}
 
 	@Override
-	public Object decode(Field f, ListType data, Deserializer parent) {
+	public Object decode(DataContext dc, ListType data, Deserializer parent) {
 		List<Object> list = new ArrayList<Object>();
+		Class<?> componentType = dc.clazz.getComponentType();
 		for (SerializedDataType i : data.values) {
-			Object decoded = parent.decode(f, i);
+			Object decoded = parent.decode(new DataContext(componentType, new Annotation[] {}), i);
 			System.out.println(i);
 			list.add(decoded);
 		}
-		if (f.getType().isArray())
+		if (dc.clazz.isArray())
 			// 1984
-			return list.toArray((Object[])Array.newInstance(f.getType().getComponentType(), 0));
+			return list.toArray((Object[])Array.newInstance(componentType, 0));
 		else
 			return list;
 	}

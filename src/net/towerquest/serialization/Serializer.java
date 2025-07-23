@@ -24,10 +24,10 @@ public class Serializer {
 		return objectMap.get(obj);
 	}
 	
-	public SerializedDataType encode(Field f, Object obj) {
+	public SerializedDataType encode(DataContext dc, Object obj) {
 		for (TypeHandler th : typeHandlers) {
-			if (th.canEncode(f, obj)) {
-				SerializedDataType ret = th.encode(f, obj, this);
+			if (th.canEncode(dc, obj)) {
+				SerializedDataType ret = th.encode(dc, obj, this);
 				if (!(ret instanceof PointerValue))
 					objectMap.putIfAbsent(obj, ret);
 				return ret;
@@ -49,7 +49,7 @@ public class Serializer {
 					String name = f.getName();
 					Object obj = f.get(s);
 					if (obj != null) {
-						SerializedDataType val = encode(f, obj);
+						SerializedDataType val = encode(new DataContext(f), obj);
 						root.values.put(name, val);
 					}
 				}

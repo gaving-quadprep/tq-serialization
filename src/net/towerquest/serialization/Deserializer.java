@@ -12,10 +12,10 @@ public class Deserializer {
 	
 	private List<TypeHandler> typeHandlers = new ArrayList<TypeHandler>();
 	
-	public Object decode(Field f, SerializedDataType data) {
+	public Object decode(DataContext dc, SerializedDataType data) {
 		for (TypeHandler th : typeHandlers) {
-			if (th.canDecode(f, data)) {
-				Object ret = th.decode(f, data, this);
+			if (th.canDecode(dc, data)) {
+				Object ret = th.decode(dc, data, this);
 				return ret;
 			}
 		}
@@ -57,7 +57,7 @@ public class Deserializer {
 				SerializedDataType fieldData = sd.get(fieldName);
 				System.out.println(fieldData);
 				if (fieldData != null) {
-					Object decoded = decode(f, fieldData);
+					Object decoded = decode(new DataContext(f), fieldData);
 					System.out.println(decoded);
 					if (decoded != null) {
 						System.out.println("not null: " + fieldName);
