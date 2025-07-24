@@ -2,6 +2,7 @@ package net.towerquest.serialization.tests;
 
 import java.awt.Color;
 
+import net.towerquest.serialization.IfVersionLessThan;
 import net.towerquest.serialization.ScaleBy;
 import net.towerquest.serialization.Serializable;
 
@@ -22,6 +23,8 @@ public class ExampleObj1 implements Serializable {
 	float jkl;
 	
 	// Should be 1 or 1.0
+	@IfVersionLessThan(major = 1, minor = 4,
+			conditional = @ScaleBy(0.5))
 	float one = 1.0f;
 	// Should not be saved
 	Double notZero;
@@ -50,17 +53,16 @@ public class ExampleObj1 implements Serializable {
 	// to stop the deserialized one from being the same
 	public void init() {
 
-		ExampleObj2 obj2 = new ExampleObj2();
+		// Shoule be "Object One"
+		ExampleObj2 obj2 = new ExampleObj2("Object One", 0);
 		// Should be 0 red, 255 green, 255 blue (depending on the java definition)
 		obj2.color = Color.CYAN;
-		// Shoule be "Object One"
-		obj2.name = "Object One";
 		// Should be 4294967297
 		obj2.value = 4294967297l;
 		// Should be 1984
 		obj2.otherValue = 1984l;
 		
-		ExampleObj2 otherObj2 = new ExampleObj2();
+		ExampleObj2 otherObj2 = new ExampleObj2("Object Two", 1);
 		// Should not be saved
 		otherObj2.color = null;
 		// Should be ""

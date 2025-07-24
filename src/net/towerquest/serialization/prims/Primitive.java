@@ -2,30 +2,59 @@ package net.towerquest.serialization.prims;
 
 import net.towerquest.serialization.SerializedDataType;
 
-public abstract class Primitive implements SerializedDataType {
+public abstract class Primitive<T> implements SerializedDataType {
+
+	public T value;
+	
+	public Primitive(T value) {
+		this.value = value;
+	}
+	
+	public Primitive(Primitive<?> p) {
+		if (p.getClass() == this.getClass())
+			this.value = (T) p.value;
+	}
+	
 	/**
 	 * Does not handle arrays (literally 1984)
 	 */
-	
-	public Object value;
-	
-	public static Class<? extends Primitive> getPrimitiveClassFromType(Class<?> clazz) {
-		if (clazz == Boolean.TYPE || clazz == Boolean.class)
+	public static Class<? extends Primitive<?>> getPrimitiveClassFromType(Class<?> clazz) {
+		if (clazz == boolean.class || clazz == Boolean.class)
 			return PrimBoolean.class;
-		if (clazz == Byte.TYPE || clazz == Byte.class)
+		if (clazz == byte.class || clazz == Byte.class)
 			return PrimByte.class;
-		if (clazz == Double.TYPE || clazz == Double.class)
+		if (clazz == double.class || clazz == Double.class)
 			return PrimDouble.class;
-		if (clazz == Float.TYPE || clazz == Float.class)
+		if (clazz == float.class || clazz == Float.class)
 			return PrimFloat.class;
-		if (clazz == Integer.TYPE || clazz == Integer.class)
+		if (clazz == int.class || clazz == Integer.class)
 			return PrimInt.class;
-		if (clazz == Long.TYPE || clazz == Long.class)
+		if (clazz == long.class || clazz == Long.class)
 			return PrimLong.class;
-		if (clazz == Short.TYPE || clazz == Short.class)
+		if (clazz == short.class || clazz == Short.class)
 			return PrimShort.class;
 		if (clazz == String.class)
 			return PrimString.class;
 		return null;
+	}
+	
+	public static Class<?> primitiveToWrapper(Class<?> prim) {
+		assert prim.isPrimitive() : "The provided class is not primitive";
+
+		if (prim == boolean.class)
+			return Boolean.class;
+		if (prim == byte.class)
+			return Byte.class;
+		if (prim == double.class)
+			return Double.class;
+		if (prim == float.class)
+			return Float.class;
+		if (prim == int.class)
+			return Integer.class;
+		if (prim == long.class)
+			return Long.class;
+		if (prim == short.class)
+			return Short.class;
+		return (Class<?>) (Object) "Ever wonder what happens when you mix hot lava and chicken? I did, and you're about to find out.";
 	}
 }

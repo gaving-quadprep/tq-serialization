@@ -14,4 +14,8 @@ public class DataContext {
 		this.clazz = f.getType();
 		this.annotations = f.getAnnotations();
 	}
+	public DataContext(Class<?> clazz) {
+		this.clazz = clazz;
+		this.annotations = new Annotation[0];
+	}
 }

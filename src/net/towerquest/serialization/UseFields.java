@@ -1,15 +1,13 @@
 package net.towerquest.serialization;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-@Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-/**
- * They want me to fight the annotation?
- * <p>
- * ANNOTATION JOCKEY!
- */
-public abstract @interface TQSAnnotation {}
+@Target(ElementType.CONSTRUCTOR)
+public @interface UseFields {
+	String[] value();
+}

@@ -1,14 +1,15 @@
 package net.towerquest.serialization.prims;
 
-import java.lang.reflect.Field;
+import java.lang.annotation.Annotation;
 
 import net.towerquest.serialization.DataContext;
 import net.towerquest.serialization.Deserializer;
+import net.towerquest.serialization.ScaleBy;
 import net.towerquest.serialization.SerializedDataType;
 import net.towerquest.serialization.Serializer;
 import net.towerquest.serialization.TypeHandler;
 
-public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive, Primitive> {
+public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive<?>, Primitive<?>> {
 	@Override
 	public boolean canEncode(DataContext dc, Object obj) {
 		Class<?> type = obj.getClass();
@@ -24,25 +25,32 @@ public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive, Prim
 	}
 
 	@Override
-	public Primitive encode(DataContext dc, Object obj, Serializer parent) {
-		//f.getAnnotationsByType(ScaleBy.class)
+	public Primitive<?> encode(DataContext dc, Object obj, Serializer parent) {
+		double scaleBy = 1;
+		for (Annotation a : dc.annotations)
+			if (a instanceof ScaleBy)
+				scaleBy = ((ScaleBy) a).value();
+		Primitive<?> ret = null;
 		if(obj instanceof Boolean)
-			return new PrimBoolean((Boolean)obj);
+			ret = new PrimBoolean((Boolean)obj);
 		if(obj instanceof Byte)
-			return new PrimByte((Byte)obj);
+			ret = new PrimByte((Byte)obj);
 		if(obj instanceof Double)
-			return new PrimDouble((Double)obj);
+			ret = new PrimDouble((Double)obj);
 		if(obj instanceof Float)
-			return new PrimFloat((Float)obj);
+			ret = new PrimFloat((Float)obj);
 		if(obj instanceof Integer)
-			return new PrimInt((Integer)obj);
+			ret = new PrimInt((Integer)obj);
 		if(obj instanceof Long)
-			return new PrimLong((Long)obj);
+			ret = new PrimLong((Long)obj);
 		if(obj instanceof Short)
-			return new PrimShort((Short)obj);
+			ret = new PrimShort((Short)obj);
 		if(obj instanceof String)
-			return new PrimString((String)obj);
-		return null;
+			ret = new PrimString((String)obj);
+		
+		if (ret instanceof PrimNumber && scaleBy != 1)
+			((PrimNumber<?>)ret).scaleBy(scaleBy);
+		return ret;
 	}
 
 	@Override
@@ -60,8 +68,27 @@ public class PrimitiveTypeHandler implements TypeHandler<Object, Primitive, Prim
 	}
 
 	@Override
-	public Object decode(DataContext dc, Primitive data, Deserializer parent) {
-		return data.value;
+	public Object decode(DataContext dc, Primitive<?> data, Deserializer parent) {
+		Primitive<?> ret;
+		try {
+			ret = Primitive.getPrimitiveClassFromType(dc.clazz)
+					.getConstructor(Primitive.class)
+					.newInstance(data);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ret = data;
+		}
+		
+		double scaleBy = 1;
+		for (Annotation a : dc.annotations)
+			if (a instanceof ScaleBy)
+				scaleBy = ((ScaleBy) a).value();
+		
+		if (ret instanceof PrimNumber && scaleBy != 1)
+			((PrimNumber<?>)ret).scaleBy(1/scaleBy);
+		
+		return ret.value;
 	}
 
 }

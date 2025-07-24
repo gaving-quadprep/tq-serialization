@@ -2,7 +2,6 @@ package net.towerquest.serialization;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,13 +18,13 @@ public class ListTypeHandler implements TypeHandler<Object, ListType, ListType>{
 		Class<?> type = obj.getClass();
 		ListType destList = new ListType();
 		if (type.isArray()) {
-			Class<?> ListType = type.getComponentType();
+			Class<?> listType = type.getComponentType();
 			Object[] sourceList = (Object[])obj;
 			
 			for (int i = 0; i < sourceList.length; i++) {
 				Object value = sourceList[i];
 				if (value != null)
-					destList.values.add(parent.encode(null, value));
+					destList.values.add(parent.encode(new DataContext(listType), value));
 				else
 					destList.values.add(null);
 			}
@@ -51,8 +50,7 @@ public class ListTypeHandler implements TypeHandler<Object, ListType, ListType>{
 		List<Object> list = new ArrayList<Object>();
 		Class<?> componentType = dc.clazz.getComponentType();
 		for (SerializedDataType i : data.values) {
-			Object decoded = parent.decode(new DataContext(componentType, new Annotation[] {}), i);
-			System.out.println(i);
+			Object decoded = parent.decode(new DataContext(componentType), i);
 			list.add(decoded);
 		}
 		if (dc.clazz.isArray())

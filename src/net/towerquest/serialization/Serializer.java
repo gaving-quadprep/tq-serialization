@@ -37,7 +37,7 @@ public class Serializer {
 	}
 	
 	
-	SerializedData serializeObject(Serializable s) {
+	public SerializedData serializeObject(Serializable s) {
 		SerializedData root = new SerializedData();
 		
 		List<Field> fields = SerializationUtils.getAllFields(s.getClass());

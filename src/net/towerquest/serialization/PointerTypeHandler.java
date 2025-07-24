@@ -1,8 +1,5 @@
 package net.towerquest.serialization;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-
 public class PointerTypeHandler implements TypeHandler<Object, PointerValue, PointerValue> {
 
 	@Override
@@ -31,7 +28,8 @@ public class PointerTypeHandler implements TypeHandler<Object, PointerValue, Poi
 
 	@Override
 	public Object decode(DataContext dc, PointerValue data, Deserializer parent) {
-		// TODO Auto-generated method stub
+		// TODO figure out how to set it to null and change it later
+		
 		return null;
 	}
 	

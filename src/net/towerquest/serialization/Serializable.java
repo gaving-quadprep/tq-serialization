@@ -1,12 +1,12 @@
 package net.towerquest.serialization;
 
 public interface Serializable {
-	public default SerializedData serialize(Serializer serializer) {
-		return serializer.serialize(this);
+	public default SerializedDataType serialize(Serializer serializer) {
+		return serializer.serializeObject(this);
 	}
 	
 	// erm this happens after regular deserialization
-	public default void deserialize(SerializedData sd, Deserializer deserializer) {
+	public default void deserialize(SerializedDataType sd, Deserializer deserializer) {
 		
 	}
 }
