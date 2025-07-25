@@ -1,7 +1,5 @@
 package net.towerquest.serialization;
 
-import java.lang.reflect.Field;
-
 public class SerializableObjectTypeHandler implements TypeHandler<Serializable, SerializedDataType, SerializedData> {
 	@Override
 	public boolean canEncode(DataContext dc, Object obj) {
@@ -20,7 +18,10 @@ public class SerializableObjectTypeHandler implements TypeHandler<Serializable, 
 
 	@Override
 	public Serializable decode(DataContext dc, SerializedData data, Deserializer parent) {
-		return parent.deserialize(data, (Class<Serializable>) dc.clazz);
+		Class<Serializable> type = (Class<Serializable>) dc.clazz;
+		Serializable obj = parent.create(type, data);
+		parent.deserializeObject(type, data, obj);
+		return obj;
 	}
 
 }

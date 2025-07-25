@@ -7,10 +7,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.CONSTRUCTOR)
-public @interface UseFields {
+@Target(ElementType.FIELD)
+public @interface UseOrdinal {
 	/**
-	 * Used for constructors that have parameters.
+	 * Specifies that, instead of an enum being saved as a string representation,
+	 * it should be saved as an int using ordinal().
 	 */
-	String[] value();
 }

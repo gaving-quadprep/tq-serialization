@@ -10,11 +10,12 @@ import net.towerquest.serialization.prims.*;
 
 public class Serializer {
 	
-	private List<TypeHandler> typeHandlers = new ArrayList<TypeHandler>();
+	private List<TypeHandler<?,?,?>> typeHandlers = new ArrayList<TypeHandler<?,?,?>>();
 	
 	private List<Runnable> functionsToRun = new ArrayList<Runnable>();
 	
 	private Map<Object, SerializedDataType> objectMap = new HashMap<Object, SerializedDataType>();
+	private ListType pointers = new ListType();
 	
 	public void runAfterSerializing(Runnable function) {
 		 functionsToRun.add(function);
@@ -28,8 +29,13 @@ public class Serializer {
 		for (TypeHandler th : typeHandlers) {
 			if (th.canEncode(dc, obj)) {
 				SerializedDataType ret = th.encode(dc, obj, this);
-				if (!(ret instanceof PointerValue))
+				if (ret instanceof PointerValue) {
+					// double pointer
+					// or as we C folks call it, "**"
+					pointers.values.add(new PointerValue(ret));
+				} else {
 					objectMap.putIfAbsent(obj, ret);
+				}
 				return ret;
 			}
 		}
@@ -66,7 +72,10 @@ public class Serializer {
 	public SerializedData serialize(Serializable s) {
 		objectMap.clear();
 		functionsToRun.clear();
-		SerializedData ret = serializeObject(s);
+		pointers = new ListType();
+		SerializedData ret = new SerializedData();
+		ret.set("main", serializeObject(s));
+		ret.set("pointers", pointers);
 		for (Runnable r : functionsToRun) {
 			r.run();
 		}

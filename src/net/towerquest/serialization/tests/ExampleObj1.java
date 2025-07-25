@@ -5,6 +5,7 @@ import java.awt.Color;
 import net.towerquest.serialization.IfVersionLessThan;
 import net.towerquest.serialization.ScaleBy;
 import net.towerquest.serialization.Serializable;
+import net.towerquest.serialization.UseOrdinal;
 
 public class ExampleObj1 implements Serializable {
 	
@@ -18,6 +19,7 @@ public class ExampleObj1 implements Serializable {
 	public String name = "\\ \" \n \t <&>";
 	
 	// Should be -4.000000000000001
+	@SuppressWarnings("unused")
 	private final double asdf = -4.000000000000001;
 	// Should be 0
 	float jkl;
@@ -45,8 +47,9 @@ public class ExampleObj1 implements Serializable {
 	
 	// Should be "JAVA"
 	Language whatThisIsWrittenIn = Language.JAVA;
-	// Should not be saved
-	Language otherLanguage;
+	// Should be 2
+	@UseOrdinal
+	Language otherLanguage = Language.C;
 	
 	public ExampleObj1() {}
 	

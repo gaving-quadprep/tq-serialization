@@ -3,7 +3,7 @@ package net.towerquest.serialization;
 public class PointerTo<T> implements Serializable {
 	@Pointer
 	public T value;
-	public PointerTo() {}
+	
 	public PointerTo(T value) {
 		this.value = value;
 	}
@@ -15,8 +15,7 @@ public class PointerTo<T> implements Serializable {
 			dc = new DataContext(this.getClass().getField("value"));
 			return serializer.encode(dc, value);
 		} catch (Exception e) {
-			// nuh uh
-			return (SerializedDataType) (Object) "no";
+			return null;
 		}
 	}
 }

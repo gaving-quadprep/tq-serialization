@@ -1,6 +1,5 @@
 package net.towerquest.serialization;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;

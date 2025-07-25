@@ -1,7 +1,6 @@
 package net.towerquest.serialization;
 
 import java.awt.Color;
-import java.lang.reflect.Field;
 
 import net.towerquest.serialization.prims.PrimInt;
 
@@ -15,10 +14,10 @@ public class ColorTypeHandler implements TypeHandler<Color, SerializedData, Seri
 	@Override
 	public SerializedData encode(DataContext dc, Color obj, Serializer parent) {
 		SerializedData sd = new SerializedData();
-		sd.add("red", new PrimInt(obj.getRed()));
-		sd.add("green", new PrimInt(obj.getGreen()));
-		sd.add("blue", new PrimInt(obj.getBlue()));
-		sd.add("alpha", new PrimInt(obj.getAlpha()));
+		sd.set("red", new PrimInt(obj.getRed()));
+		sd.set("green", new PrimInt(obj.getGreen()));
+		sd.set("blue", new PrimInt(obj.getBlue()));
+		sd.set("alpha", new PrimInt(obj.getAlpha()));
 		return sd;
 	}
 

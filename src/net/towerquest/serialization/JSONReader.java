@@ -10,12 +10,70 @@ import net.towerquest.serialization.prims.PrimLong;
 import net.towerquest.serialization.prims.PrimString;
 
 public class JSONReader extends StringDataReader {
-	/*  if you are wondering why a lot of this code seems strange,
-		i made it to be compatible with readers that don't support
-		the mark() feature.
-		by the time i realized i could wrap it in a bufferedreader,
-		it was too late*/
+	/**
+	 * if you are wondering why a lot of this code seems strange,
+	 * i made it to be compatible with readers that don't support
+	 * the mark() feature.
+	 * by the time i realized i could wrap it in a bufferedreader,
+	 * it was too late
+	 **/
 	
+	public String[] splitPointer(String pointer) {
+		assert pointer.charAt(0) == '/' : "Invalid pointer: " + pointer;
+		String after = pointer.substring(1);
+		int index = after.indexOf('/');
+		int lastIndex = after.lastIndexOf('/');
+		String name, nextPointer, toLastPointer, lastPointer;
+		if (index == -1) {
+			name = after;
+			nextPointer = "";
+			toLastPointer = "";
+			lastPointer = "";
+		} else {
+			name = after.substring(0, index);
+			nextPointer = after.substring(index);
+			if (index == lastIndex)
+				toLastPointer = "";
+			else
+				toLastPointer = pointer.substring(0, lastIndex + 1);
+			lastPointer = after.substring(lastIndex);
+		}
+		return new String[] {name, nextPointer, toLastPointer, lastPointer};
+	}
+	
+	public SerializedDataType getPointer(SerializedDataType data, String pointer) {
+		String[] strs = splitPointer(pointer);
+		
+		SerializedDataType value;
+		if (data instanceof SerializedData) {
+			value = ((SerializedData)data).get(strs[0]);
+		} else {
+			assert data instanceof ListType : "Data is not a container";
+			value = ((ListType)data).values.get(Integer.valueOf(strs[0]));
+		}
+		if (strs[1].length() == 0)
+			return value;
+		else
+			return getPointer(value, strs[1]);
+	}
+	
+	public void setPointer(SerializedDataType data, String pointer, SerializedDataType value) {
+		String[] strs = splitPointer(pointer);
+		
+		if (strs[2].length() == 0) {
+			if (data instanceof SerializedData) {
+				System.out.println(((SerializedData)data).get(strs[0]));
+				System.out.println(value);
+				((SerializedData)data).set(strs[0], value);
+			} else {
+				assert data instanceof ListType : "Data is not a container";
+				((ListType)data).values.set(Integer.valueOf(strs[0]), value);
+			}
+		} else {
+			SerializedDataType enclosingData = getPointer(data, strs[2]);
+			setPointer(enclosingData, strs[3], value);
+		}
+	}
 	
 	public String readString(Reader reader) throws IOException {
 		assert reader.read() == '"';
@@ -61,7 +119,7 @@ public class JSONReader extends StringDataReader {
 				assert c == ':' : "Missing :";
 				scanWhitespace(reader, true);
 				SerializedDataType value = readData(reader);
-				sd.add(key, value);
+				sd.set(key, value);
 			}
 			nextChar = skipWhitespace(reader, true);
 			assert nextChar == ',' || nextChar == '}' : "Invalid character ("+nextChar+")";
@@ -142,7 +200,21 @@ public class JSONReader extends StringDataReader {
 	@Override
 	public SerializedData read(Reader reader) throws IOException {
 		assert reader.markSupported() : "Please use a reader that supports mark() (like BufferedReader)";
-		return readObject(reader);
+		SerializedData ret = readObject(reader);
+		ListType pointers = (ListType) ret.get("pointers");
+		if (pointers != null) {
+			for (SerializedDataType sdt : pointers.values) {
+				if (sdt instanceof PrimString) {
+					String pointerLocation = ((PrimString)sdt).value;
+					SerializedDataType pointerString = getPointer(ret, ((PrimString)sdt).value);
+					if (pointerString instanceof PrimString) {
+						PointerValue replacement = new PointerValue(getPointer(ret, ((PrimString)pointerString).value));
+						setPointer(ret, pointerLocation, replacement);
+					}
+				}
+			}
+		}
+		return ret;
 	}
 
 }

@@ -8,19 +8,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.towerquest.serialization.prims.PrimString;
-import net.towerquest.serialization.prims.Primitive;
 import net.towerquest.serialization.prims.PrimitiveTypeHandler;
 
 public class Deserializer {
 	
-	private List<TypeHandler> typeHandlers = new ArrayList<TypeHandler>();
+	private List<TypeHandler<?,?,?>> typeHandlers = new ArrayList<TypeHandler<?,?,?>>();
 	
 	private List<Runnable> functionsToRun = new ArrayList<Runnable>();
 	
 	private Map<SerializedDataType, Object> objectMap = new HashMap<SerializedDataType, Object>();
 	
-	public void runAfterSerializing(Runnable function) {
+	public void runAfterDeserializing(Runnable function) {
 		 functionsToRun.add(function);
 	}
 	
@@ -64,11 +62,6 @@ public class Deserializer {
 						
 						for (int i = 0; i < names.length; i++) {
 							params[i] = decode(new DataContext(classes[i]), sd.get(names[i]));
-							System.out.println(params[i]);
-							if (classes[i].isPrimitive()) {
-								//params[i] = params[i].
-								
-							}
 						}
 						
 						t = (T) c.newInstance(params);
@@ -88,8 +81,7 @@ public class Deserializer {
 		return t;
 	}
 	
-	public <T extends Serializable> T deserializeObject(Class<T> clazz, SerializedData sd, T t) {
-		
+	public <T extends Serializable> void deserializeObject(Class<T> clazz, SerializedData sd, T t) {
 		for (Field f : SerializationUtils.getAllFields(clazz)) {
 			f.setAccessible(true);
 			if (!Modifier.isTransient(f.getModifiers())) {
@@ -98,26 +90,44 @@ public class Deserializer {
 				SerializedDataType fieldData = sd.get(f.getName());
 				if (fieldData == null && prevName != null)
 					fieldData = sd.get(prevName.value());
-				
+				// this works for some reason
+				SerializedDataType fieldData2 = fieldData;
 				if (fieldData != null) {
-					Object decoded = decode(new DataContext(f), fieldData);
-					if (decoded != null) {
-						try {
-							f.set(t, decoded);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					if (fieldData instanceof PointerValue) {
+						runAfterDeserializing(() -> {
+							try {
+								f.setAccessible(true);
+								f.set(t, getDecodedDataLocation(((PointerValue)fieldData2).value));
+								f.setAccessible(false);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						});
+					} else {
+						Object decoded = decode(new DataContext(f), fieldData);
+						if (decoded != null) {
+							try {
+								f.set(t, decoded);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 					}
 				}
 			}
 			f.setAccessible(false);
 		}
-		
-		return t;
 	}
 	public <T extends Serializable> T deserialize(SerializedData sdt, Class<T> type) {
-		return deserializeObject(type, sdt, create(type, sdt));
+		SerializedData main = (SerializedData) sdt.get("main");
+		T ret = create(type, main);
+		deserializeObject(type, main, ret);
+		for (Runnable r : functionsToRun) {
+			r.run();
+		}
+		return ret;
 	}
 	public Deserializer() {
 		typeHandlers.add(new PointerTypeHandler());

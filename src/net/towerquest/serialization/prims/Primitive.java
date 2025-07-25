@@ -15,6 +15,11 @@ public abstract class Primitive<T> implements SerializedDataType {
 			this.value = (T) p.value;
 	}
 	
+	@Override
+	public String toString() {
+		return value.toString();
+	}
+	
 	/**
 	 * Does not handle arrays (literally 1984)
 	 */

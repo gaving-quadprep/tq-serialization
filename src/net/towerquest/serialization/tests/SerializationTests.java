@@ -11,7 +11,6 @@ import net.towerquest.serialization.JSONReader;
 import net.towerquest.serialization.JSONWriter;
 import net.towerquest.serialization.SerializedData;
 import net.towerquest.serialization.Serializer;
-import net.towerquest.serialization.XMLWriter;
 
 public class SerializationTests {
 
@@ -24,7 +23,6 @@ public class SerializationTests {
 		SerializedData data = serializer.serialize(object);
 
 		DataWriter dataWriter = new JSONWriter();
-		DataWriter dataWriter2 = new XMLWriter();
 		DataReader dataReader = new JSONReader();
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {

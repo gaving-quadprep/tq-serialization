@@ -6,7 +6,7 @@ import java.util.Map;
 public class SerializedData implements SerializedDataType {
 	public final Map<String, SerializedDataType> values = new HashMap<String, SerializedDataType>();
 	
-	public void add(String k, SerializedDataType v) {
+	public void set(String k, SerializedDataType v) {
 		values.put(k, v);
 	}
 	
