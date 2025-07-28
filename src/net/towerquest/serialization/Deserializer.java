@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.towerquest.serialization.prims.PrimString;
 import net.towerquest.serialization.prims.PrimitiveTypeHandler;
 
 public class Deserializer {
@@ -39,8 +40,16 @@ public class Deserializer {
 	}
 	
 	public <T extends Serializable> T create(Class<T> clazz, SerializedData sd) {
-		
-		// I'm hungry
+		PrimString objType = (PrimString) sd.get("class");
+		if (objType != null) {
+			if (!clazz.getName().equals(objType.value)) {
+				try {
+					clazz = (Class<T>) Class.forName(objType.value);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		Constructor<T>[] constructors = (Constructor<T>[]) clazz.getConstructors();
 		assert constructors.length > 0 : "An object must have constructors to be deserialized";
 		
@@ -81,7 +90,8 @@ public class Deserializer {
 		return t;
 	}
 	
-	public <T extends Serializable> void deserializeObject(Class<T> clazz, SerializedData sd, T t) {
+	public <T extends Serializable> void deserializeObject(SerializedData sd, T t) {
+		Class<T> clazz = (Class<T>) t.getClass();
 		for (Field f : SerializationUtils.getAllFields(clazz)) {
 			f.setAccessible(true);
 			if (!Modifier.isTransient(f.getModifiers())) {
@@ -123,7 +133,7 @@ public class Deserializer {
 	public <T extends Serializable> T deserialize(SerializedData sdt, Class<T> type) {
 		SerializedData main = (SerializedData) sdt.get("main");
 		T ret = create(type, main);
-		deserializeObject(type, main, ret);
+		deserializeObject(main, ret);
 		for (Runnable r : functionsToRun) {
 			r.run();
 		}

@@ -20,7 +20,7 @@ public class SerializableObjectTypeHandler implements TypeHandler<Serializable, 
 	public Serializable decode(DataContext dc, SerializedData data, Deserializer parent) {
 		Class<Serializable> type = (Class<Serializable>) dc.clazz;
 		Serializable obj = parent.create(type, data);
-		parent.deserializeObject(type, data, obj);
+		parent.deserializeObject(data, obj);
 		return obj;
 	}
 

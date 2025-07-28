@@ -11,11 +11,12 @@ import net.towerquest.serialization.prims.*;
 public class Serializer {
 	
 	private List<TypeHandler<?,?,?>> typeHandlers = new ArrayList<TypeHandler<?,?,?>>();
-	
 	private List<Runnable> functionsToRun = new ArrayList<Runnable>();
-	
 	private Map<Object, SerializedDataType> objectMap = new HashMap<Object, SerializedDataType>();
 	private ListType pointers = new ListType();
+	private Map<Class<? extends Serializable>, String> registry = new HashMap<Class<? extends Serializable>, String>();
+	
+	// TODO use registry
 	
 	public void runAfterSerializing(Runnable function) {
 		 functionsToRun.add(function);
@@ -60,6 +61,9 @@ public class Serializer {
 					}
 				}
 				f.setAccessible(false);
+			}
+			if (s.getClass().getAnnotation(Typeless.class) == null) {
+				root.values.put("class", new PrimString(s.getClass().getName()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

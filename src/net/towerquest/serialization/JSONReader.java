@@ -62,8 +62,6 @@ public class JSONReader extends StringDataReader {
 		
 		if (strs[2].length() == 0) {
 			if (data instanceof SerializedData) {
-				System.out.println(((SerializedData)data).get(strs[0]));
-				System.out.println(value);
 				((SerializedData)data).set(strs[0], value);
 			} else {
 				assert data instanceof ListType : "Data is not a container";

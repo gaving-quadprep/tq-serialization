@@ -25,8 +25,6 @@ public class ExampleObj1 implements Serializable {
 	float jkl;
 	
 	// Should be 1 or 1.0
-	@IfVersionLessThan(major = 1, minor = 4,
-			conditional = @ScaleBy(0.5))
 	float one = 1.0f;
 	// Should not be saved
 	Double notZero;
@@ -82,8 +80,11 @@ public class ExampleObj1 implements Serializable {
 		
 		exampleObject = obj2;
 		
+		ExampleObj3 obj3 = new ExampleObj3("Object", 3);
+		obj3.otherString = "Three";
+		
 
-		// Should be object, null, object
-		this.list = new ExampleObj2[] {obj2, null, otherObj2};
+		// Should be object, null, object, object (which has other string)
+		this.list = new ExampleObj2[] {obj2, null, otherObj2, obj3};
 	}
 }
