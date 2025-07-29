@@ -9,6 +9,7 @@ import net.towerquest.serialization.DataWriter;
 import net.towerquest.serialization.Deserializer;
 import net.towerquest.serialization.JSONReader;
 import net.towerquest.serialization.JSONWriter;
+import net.towerquest.serialization.PointerValue;
 import net.towerquest.serialization.SerializedData;
 import net.towerquest.serialization.Serializer;
 
@@ -27,12 +28,16 @@ public class SerializationTests {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
 			dataWriter.write(data, output);
+			String first = output.toString();
+			System.out.println(first);
 			SerializedData data2 = dataReader.read(new ByteArrayInputStream(output.toByteArray()));
 			ExampleObj1 otherObject = deserializer.deserialize(data2, ExampleObj1.class);
 			SerializedData data3 = serializer.serialize(otherObject);
 			output.reset();
 			dataWriter.write(data3, output);
-			System.out.println(output.toString());
+			String second = output.toString();
+			System.out.println(second);
+			assert first.equals(second) : "Not equal after deserialization";
 			
 		} catch (IOException e) {
 			e.printStackTrace();

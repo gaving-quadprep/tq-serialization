@@ -16,6 +16,7 @@ public class JSONReader extends StringDataReader {
 	 * the mark() feature.
 	 * by the time i realized i could wrap it in a bufferedreader,
 	 * it was too late
+	 * also, the code for parsing pointers is bad
 	 **/
 	
 	public String[] splitPointer(String pointer) {
@@ -32,7 +33,7 @@ public class JSONReader extends StringDataReader {
 		} else {
 			name = after.substring(0, index);
 			nextPointer = after.substring(index);
-			if (index == lastIndex)
+			if (lastIndex == -1)
 				toLastPointer = "";
 			else
 				toLastPointer = pointer.substring(0, lastIndex + 1);
@@ -58,8 +59,9 @@ public class JSONReader extends StringDataReader {
 	}
 	
 	public void setPointer(SerializedDataType data, String pointer, SerializedDataType value) {
+		System.out.println(pointer);
 		String[] strs = splitPointer(pointer);
-		
+		System.out.println(strs[0]);
 		if (strs[2].length() == 0) {
 			if (data instanceof SerializedData) {
 				((SerializedData)data).set(strs[0], value);
@@ -204,9 +206,11 @@ public class JSONReader extends StringDataReader {
 			for (SerializedDataType sdt : pointers.values) {
 				if (sdt instanceof PrimString) {
 					String pointerLocation = ((PrimString)sdt).value;
-					SerializedDataType pointerString = getPointer(ret, ((PrimString)sdt).value);
+					SerializedDataType pointerString = getPointer(ret, pointerLocation);
 					if (pointerString instanceof PrimString) {
 						PointerValue replacement = new PointerValue(getPointer(ret, ((PrimString)pointerString).value));
+						System.out.println(pointerString);
+						System.out.println(pointerLocation);
 						setPointer(ret, pointerLocation, replacement);
 					}
 				}

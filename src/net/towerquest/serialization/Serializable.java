@@ -7,6 +7,7 @@ public interface Serializable {
 	
 	// erm this happens after regular deserialization
 	public default void deserialize(SerializedDataType sd, Deserializer deserializer) {
-		
+		if (sd instanceof SerializedData)
+			deserializer.deserializeObject((SerializedData)sd, this);
 	}
 }

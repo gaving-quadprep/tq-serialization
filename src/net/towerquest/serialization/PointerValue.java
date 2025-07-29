@@ -1,7 +1,7 @@
 package net.towerquest.serialization;
 
 public class PointerValue implements SerializedDataType {
-	SerializedDataType value;
+	public SerializedDataType value;
 	
 	public PointerValue(SerializedDataType value) {
 		this.value = value;

@@ -3,10 +3,15 @@ package net.towerquest.serialization.tests;
 import java.awt.Color;
 
 import net.towerquest.serialization.IfVersionLessThan;
+import net.towerquest.serialization.Pointer;
+import net.towerquest.serialization.PointerTo;
 import net.towerquest.serialization.ScaleBy;
 import net.towerquest.serialization.Serializable;
+import net.towerquest.serialization.Typeless;
 import net.towerquest.serialization.UseOrdinal;
 
+// Shouldn't contain 'class'
+@Typeless
 public class ExampleObj1 implements Serializable {
 	
 	enum Language {
@@ -33,6 +38,9 @@ public class ExampleObj1 implements Serializable {
 	
 	ExampleObj2 exampleObject;
 	protected ExampleObj2[] list;
+	PointerTo<ExampleObj2>[] pointerArray;
+	@Pointer
+	PointerTo<ExampleObj2>[] pointerToPointerArray;
 
 	// Should be 1
 	@ScaleBy(7)
@@ -86,5 +94,10 @@ public class ExampleObj1 implements Serializable {
 
 		// Should be object, null, object, object (which has other string)
 		this.list = new ExampleObj2[] {obj2, null, otherObj2, obj3};
+		this.pointerArray = new PointerTo[] {
+				new PointerTo<ExampleObj2>(obj2),
+				new PointerTo<ExampleObj2>(otherObj2),
+				new PointerTo<ExampleObj2>(obj3)};
+		this.pointerToPointerArray = pointerArray;
 	}
 }

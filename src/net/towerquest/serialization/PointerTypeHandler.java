@@ -23,6 +23,12 @@ public class PointerTypeHandler implements TypeHandler<Object, PointerValue, Poi
 	
 	@Override
 	public boolean canDecode(DataContext dc, SerializedDataType data) {
+		if (dc.clazz == PointerTo.class) {
+			for (int i = 0; i < dc.annotations.length; i++)
+				if (dc.annotations[i] instanceof Pointer)
+					return true;
+			return false;
+		}
 		return data instanceof PointerValue;
 	}
 

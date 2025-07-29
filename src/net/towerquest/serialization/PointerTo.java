@@ -5,8 +5,11 @@ public class PointerTo<T> implements Serializable {
 	public T value;
 	
 	public PointerTo(T value) {
+		this();
 		this.value = value;
 	}
+	
+	private PointerTo() {}
 	
 	@Override
 	public SerializedDataType serialize(Serializer serializer) {
@@ -16,6 +19,15 @@ public class PointerTo<T> implements Serializable {
 			return serializer.encode(dc, value);
 		} catch (Exception e) {
 			return null;
+		}
+	}
+	
+	@Override
+	public void deserialize(SerializedDataType sd, Deserializer deserializer) {
+		if (sd instanceof PointerValue) {
+			deserializer.runAfterDeserializing(() -> {
+				this.value = (T) deserializer.getDecodedDataLocation(((PointerValue)sd).value);
+			});
 		}
 	}
 }

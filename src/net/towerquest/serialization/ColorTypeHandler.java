@@ -23,7 +23,7 @@ public class ColorTypeHandler implements TypeHandler<Color, SerializedData, Seri
 
 	@Override
 	public boolean canDecode(DataContext dc, SerializedDataType data) {
-		return (dc.clazz == Color.class);
+		return dc.clazz == Color.class && data instanceof SerializedData;
 	}
 
 	@Override

@@ -28,6 +28,9 @@ public class Deserializer {
 	}
 	
 	public Object decode(DataContext dc, SerializedDataType data) {
+		if (data == null) {
+			return null;
+		}
 		for (TypeHandler th : typeHandlers) {
 			if (th.canDecode(dc, data)) {
 				Object ret = th.decode(dc, data, this);
@@ -39,32 +42,38 @@ public class Deserializer {
 		return null;
 	}
 	
-	public <T extends Serializable> T create(Class<T> clazz, SerializedData sd) {
-		PrimString objType = (PrimString) sd.get("class");
-		if (objType != null) {
-			if (!clazz.getName().equals(objType.value)) {
-				try {
-					clazz = (Class<T>) Class.forName(objType.value);
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+	public <T extends Serializable> T create(Class<T> clazz, SerializedDataType data) {
+		SerializedData sd = null;
+		if (data instanceof SerializedData)
+			sd = (SerializedData)data;
+		
+		if (sd != null) {
+			PrimString objType = (PrimString) sd.get("class");
+			if (objType != null) {
+				if (!clazz.getName().equals(objType.value)) {
+					try {
+						clazz = (Class<T>) Class.forName(objType.value);
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
-		Constructor<T>[] constructors = (Constructor<T>[]) clazz.getConstructors();
+		Constructor<T>[] constructors = (Constructor<T>[]) clazz.getDeclaredConstructors();
 		assert constructors.length > 0 : "An object must have constructors to be deserialized";
 		
 		T t = null;
 		for (Constructor<T> c : constructors) {
 			try {
+				c.setAccessible(true);
 				if (c.getParameterCount() == 0) {
-					c.setAccessible(true);
 					t = (T) c.newInstance();
 					c.setAccessible(false);
 					break;
 				} else {
-					c.setAccessible(true);
 					UseFields uf = c.getAnnotation(UseFields.class);
 					if (uf != null) {
+						assert sd != null : "A SerializedData container is necessary for UseFields";
 						String[] names = uf.value();
 						Object[] params = new Object[names.length];
 						Class<?>[] classes = c.getParameterTypes();
@@ -85,13 +94,13 @@ public class Deserializer {
 			c.setAccessible(false);
 		}
 		
-		assert t != null : "No valid constructors found";
+		assert t != null : "No valid constructors found for "+clazz.getName();
 		
 		return t;
 	}
 	
-	public <T extends Serializable> void deserializeObject(SerializedData sd, T t) {
-		Class<T> clazz = (Class<T>) t.getClass();
+	public void deserializeObject(SerializedData sd, Serializable obj) {
+		Class<?> clazz = (Class<?>) obj.getClass();
 		for (Field f : SerializationUtils.getAllFields(clazz)) {
 			f.setAccessible(true);
 			if (!Modifier.isTransient(f.getModifiers())) {
@@ -107,7 +116,7 @@ public class Deserializer {
 						runAfterDeserializing(() -> {
 							try {
 								f.setAccessible(true);
-								f.set(t, getDecodedDataLocation(((PointerValue)fieldData2).value));
+								f.set(obj, getDecodedDataLocation(((PointerValue)fieldData2).value));
 								f.setAccessible(false);
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
@@ -118,7 +127,7 @@ public class Deserializer {
 						Object decoded = decode(new DataContext(f), fieldData);
 						if (decoded != null) {
 							try {
-								f.set(t, decoded);
+								f.set(obj, decoded);
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -131,19 +140,23 @@ public class Deserializer {
 		}
 	}
 	public <T extends Serializable> T deserialize(SerializedData sdt, Class<T> type) {
+		functionsToRun.clear();
+		objectMap.clear();
+		
 		SerializedData main = (SerializedData) sdt.get("main");
 		T ret = create(type, main);
-		deserializeObject(main, ret);
+		ret.deserialize(main, this);
 		for (Runnable r : functionsToRun) {
 			r.run();
 		}
+		
 		return ret;
 	}
 	public Deserializer() {
+		typeHandlers.add(new SerializableObjectTypeHandler());
 		typeHandlers.add(new PointerTypeHandler());
 		typeHandlers.add(new ListTypeHandler());
 		typeHandlers.add(new PrimitiveTypeHandler());
-		typeHandlers.add(new SerializableObjectTypeHandler());
 		typeHandlers.add(new EnumTypeHandler());
 		typeHandlers.add(new ColorTypeHandler());
 	}

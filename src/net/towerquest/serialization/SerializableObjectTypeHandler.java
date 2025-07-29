@@ -1,6 +1,6 @@
 package net.towerquest.serialization;
 
-public class SerializableObjectTypeHandler implements TypeHandler<Serializable, SerializedDataType, SerializedData> {
+public class SerializableObjectTypeHandler implements TypeHandler<Serializable, SerializedDataType, SerializedDataType> {
 	@Override
 	public boolean canEncode(DataContext dc, Object obj) {
 		return (obj instanceof Serializable);
@@ -13,14 +13,15 @@ public class SerializableObjectTypeHandler implements TypeHandler<Serializable, 
 
 	@Override
 	public boolean canDecode(DataContext dc, SerializedDataType data) {
-		return Serializable.class.isAssignableFrom(dc.clazz) && data instanceof SerializedData;
+		return Serializable.class.isAssignableFrom(dc.clazz);
 	}
 
 	@Override
-	public Serializable decode(DataContext dc, SerializedData data, Deserializer parent) {
+	public Serializable decode(DataContext dc, SerializedDataType data, Deserializer parent) {
 		Class<Serializable> type = (Class<Serializable>) dc.clazz;
 		Serializable obj = parent.create(type, data);
-		parent.deserializeObject(data, obj);
+		if (obj != null)
+			obj.deserialize(data, parent);
 		return obj;
 	}
 
