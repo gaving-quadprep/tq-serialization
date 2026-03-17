@@ -24,12 +24,12 @@ public class EnumTypeHandler implements TypeHandler<Enum<?>, Primitive<?>, Primi
 
 	@Override
 	public boolean canDecode(DataContext dc, SerializedDataType data) {
-		return (Enum.class.isAssignableFrom(dc.clazz));
+		return Enum.class.isAssignableFrom(dc.clazz);
 	}
 
 	@Override
 	public Enum<?> decode(DataContext dc, Primitive<?> data, Deserializer parent) {
-		if (data instanceof PrimInt)
+		if (data instanceof PrimInt) {
 			try {
 				Method m = dc.clazz.getMethod("values");
 				m.setAccessible(true);
@@ -39,6 +39,7 @@ public class EnumTypeHandler implements TypeHandler<Enum<?>, Primitive<?>, Primi
 				e.printStackTrace();
 				return null;
 			}
+		}
 		return Enum.valueOf((Class<Enum>) dc.clazz, ((PrimString)data).value);
 	}
 	
