@@ -15,16 +15,16 @@ public class JSONWriter extends StringDataWriter {
 	// i stole this from stack overflow because i'm too lazy to add a library
 	@Override
 	public String escape(String raw) {
-	    String escaped = raw;
-	    escaped = escaped.replace("\\", "\\\\");
-	    escaped = escaped.replace("\"", "\\\"");
-	    escaped = escaped.replace("\b", "\\b");
-	    escaped = escaped.replace("\f", "\\f");
-	    escaped = escaped.replace("\n", "\\n");
-	    escaped = escaped.replace("\r", "\\r");
-	    escaped = escaped.replace("\t", "\\t");
-	    // TODO: escape other non-printing characters using uXXXX notation
-	    return escaped;
+		String escaped = raw;
+		escaped = escaped.replace("\\", "\\\\");
+		escaped = escaped.replace("\"", "\\\"");
+		escaped = escaped.replace("\b", "\\b");
+		escaped = escaped.replace("\f", "\\f");
+		escaped = escaped.replace("\n", "\\n");
+		escaped = escaped.replace("\r", "\\r");
+		escaped = escaped.replace("\t", "\\t");
+		// TODO: escape other non-printing characters using uXXXX notation
+		return escaped;
 	}
 	
 	public void writeString(Writer writer, String str) throws IOException {

@@ -35,7 +35,7 @@ public class XMLWriter extends StringDataWriter {
 			// checks for numeric strings
 			try {  
 				Double.parseDouble(str);  
-			    return true;
+				return true;
 			} catch(NumberFormatException e) {}
 
 			//empty values
