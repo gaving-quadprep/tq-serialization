@@ -9,7 +9,7 @@ public class ExampleObj3 extends ExampleObj2 {
 	@UseFields({"name", "value"})
 	public ExampleObj3(String name, long value) {
 		super(name, value);
-		// TODO Auto-generated constructor stub
+		System.out.println("My name is "+name);
 	}
 
 	// should be deserialized

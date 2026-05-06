@@ -9,7 +9,6 @@ import net.towerquest.serialization.DataWriter;
 import net.towerquest.serialization.Deserializer;
 import net.towerquest.serialization.JSONReader;
 import net.towerquest.serialization.JSONWriter;
-import net.towerquest.serialization.PointerValue;
 import net.towerquest.serialization.SerializedData;
 import net.towerquest.serialization.Serializer;
 

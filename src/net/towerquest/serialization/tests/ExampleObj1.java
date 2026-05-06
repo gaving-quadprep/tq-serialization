@@ -2,7 +2,6 @@ package net.towerquest.serialization.tests;
 
 import java.awt.Color;
 
-import net.towerquest.serialization.IfVersionLessThan;
 import net.towerquest.serialization.Pointer;
 import net.towerquest.serialization.PointerTo;
 import net.towerquest.serialization.ScaleBy;

@@ -1,6 +1,5 @@
 package net.towerquest.serialization;
 
-import java.lang.reflect.Field;
 
 public interface TypeHandler<ObjType, EncodeType extends SerializedDataType, DecodeType extends SerializedDataType> {
 	// TODO rename these to make it make at least a little bit of sense

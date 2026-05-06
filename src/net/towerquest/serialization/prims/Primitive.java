@@ -2,7 +2,7 @@ package net.towerquest.serialization.prims;
 
 import net.towerquest.serialization.SerializedDataType;
 
-public abstract class Primitive<T> implements SerializedDataType {
+public abstract class Primitive<T> implements SerializedDataType, Comparable<Primitive<T>> {
 
 	public T value;
 	
@@ -18,6 +18,11 @@ public abstract class Primitive<T> implements SerializedDataType {
 	@Override
 	public String toString() {
 		return value.toString();
+	}
+
+	@Override
+	public int compareTo(Primitive<T> o) {
+		return ((Comparable<T>) value).compareTo(o.value);
 	}
 	
 	/**
@@ -60,6 +65,6 @@ public abstract class Primitive<T> implements SerializedDataType {
 			return Long.class;
 		if (prim == short.class)
 			return Short.class;
-		return (Class<?>) (Object) "Ever wonder what happens when you mix hot lava and chicken? I did, and you're about to find out.";
+		return null; // this will only happen if a new primitive is added
 	}
 }

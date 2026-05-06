@@ -31,8 +31,7 @@ public class Serializer {
 			if (th.canEncode(dc, obj)) {
 				SerializedDataType ret = th.encode(dc, obj, this);
 				if (ret instanceof PointerValue) {
-					// double pointer
-					// or as we C folks call it, "**"
+					// pointer to the pointer
 					pointers.values.add(new PointerValue(ret));
 				} else {
 					objectMap.putIfAbsent(obj, ret);
