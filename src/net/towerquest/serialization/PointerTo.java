@@ -12,6 +12,17 @@ public class PointerTo<T> implements Serializable {
 	private PointerTo() {}
 	
 	@Override
+	public boolean equals(Object other) {
+		if (other instanceof PointerTo) {
+			PointerTo<?> ptother = (PointerTo<?>)other;
+			if(ptother.value != null)
+				return ptother.value.equals(value);
+			return value == null;
+		}
+		return false;
+	}
+	
+	@Override
 	public SerializedDataType serialize(Serializer serializer) {
 		DataContext dc;
 		try {
