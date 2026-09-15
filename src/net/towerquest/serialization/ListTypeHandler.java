@@ -3,7 +3,9 @@ package net.towerquest.serialization;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ListTypeHandler implements TypeHandler<Object, ListType, ListType>{
 
@@ -52,10 +54,13 @@ public class ListTypeHandler implements TypeHandler<Object, ListType, ListType>{
 			Object decoded = parent.decode(new DataContext(componentType), i);
 			list.add(decoded);
 		}
-		if (dc.clazz.isArray())
+		if (dc.clazz.isArray()) {
 			// 1984
 			return list.toArray((Object[])Array.newInstance(componentType, 0));
-		else
+		} else if (Set.class.isAssignableFrom(dc.clazz)) {
+			return new HashSet<Object>(list);
+		} else {
 			return list;
+		}
 	}
 }

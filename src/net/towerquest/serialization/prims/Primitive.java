@@ -3,7 +3,6 @@ package net.towerquest.serialization.prims;
 import net.towerquest.serialization.SerializedDataType;
 
 public abstract class Primitive<T> implements SerializedDataType, Comparable<Primitive<T>> {
-
 	public T value;
 	
 	public Primitive(T value) {
@@ -33,6 +32,8 @@ public abstract class Primitive<T> implements SerializedDataType, Comparable<Pri
 			return PrimBoolean.class;
 		if (clazz == byte.class || clazz == Byte.class)
 			return PrimByte.class;
+		if (clazz == char.class || clazz == Character.class)
+			return PrimChar.class;
 		if (clazz == double.class || clazz == Double.class)
 			return PrimDouble.class;
 		if (clazz == float.class || clazz == Float.class)
@@ -55,6 +56,8 @@ public abstract class Primitive<T> implements SerializedDataType, Comparable<Pri
 			return Boolean.class;
 		if (prim == byte.class)
 			return Byte.class;
+		if (prim == char.class)
+			return Character.class;
 		if (prim == double.class)
 			return Double.class;
 		if (prim == float.class)
@@ -66,5 +69,31 @@ public abstract class Primitive<T> implements SerializedDataType, Comparable<Pri
 		if (prim == short.class)
 			return Short.class;
 		return null; // this will only happen if a new primitive is added
+	}
+	
+	public static boolean isPrimitiveWrapper(Class<?> clazz) {
+		return Boolean.class.isAssignableFrom(clazz) ||
+				Character.class.isAssignableFrom(clazz) ||
+				Number.class.isAssignableFrom(clazz);
+	}
+	
+	public static int byteSize(Class<?> clazz) {
+		if (clazz == boolean.class || clazz == Boolean.class)
+			return 1;
+		if (clazz == byte.class || clazz == Byte.class)
+			return 1;
+		if (clazz == char.class || clazz == Character.class)
+			return 2;
+		if (clazz == double.class || clazz == Double.class)
+			return 8;
+		if (clazz == float.class || clazz == Float.class)
+			return 4;
+		if (clazz == int.class || clazz == Integer.class)
+			return 4;
+		if (clazz == long.class || clazz == Long.class)
+			return 8;
+		if (clazz == short.class || clazz == Short.class)
+			return 2;
+		return -1;
 	}
 }

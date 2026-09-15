@@ -1,6 +1,7 @@
 package net.towerquest.serialization.prims;
 
 public class PrimString extends Primitive<String> {
+	// strings aren't really primitive in java, but they are treated like it
 	public PrimString(String value) {
 		super(value);
 	}

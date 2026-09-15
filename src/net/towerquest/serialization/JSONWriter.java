@@ -1,6 +1,7 @@
 package net.towerquest.serialization;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +79,10 @@ public class JSONWriter extends StringDataWriter {
 			if (path2 != null)
 				writeString(writer, path2);
 		}
+		if (data instanceof ByteArrayType) {
+			writeString(writer, Base64.getEncoder().encodeToString(((ByteArrayType)data).value));
+		}
+		
 		if (data == null)
 			writer.write("null");
 	}
