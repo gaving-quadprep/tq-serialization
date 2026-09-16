@@ -29,11 +29,11 @@ public class SerializationTests {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
 			dataWriter.write(data, output);
-			String first = output.toString();
-			System.out.println(first);
+			// TODO it freezes hedre, not sure why
 			SerializedData data2 = dataReader.read(new ByteArrayInputStream(output.toByteArray()));
 			ExampleObj1 otherObject = deserializer.deserialize(data2, ExampleObj1.class);
 			SerializedData data3 = serializer.serialize(otherObject);
+			output.flush();
 			output.reset();
 			dataWriter2.write(data3, output);
 			String second = output.toString();

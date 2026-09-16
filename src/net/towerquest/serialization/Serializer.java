@@ -34,8 +34,7 @@ public class Serializer {
 			if (th.canEncode(dc, obj)) {
 				SerializedDataType ret = th.encode(dc, obj, this);
 				if (ret instanceof PointerValue) {
-					// pointer to the pointer
-					pointers.add(new PointerValue(ret));
+					pointers.add((PointerValue)ret);
 				} else {
 					objectMap.putIfAbsent(obj, ret);
 				}
@@ -78,9 +77,9 @@ public class Serializer {
 	public SerializedData serialize(Serializable s) {
 		SerializedData ret = new SerializedData();
 		ret.set("main", serializeObject(s));
-		// TODO figure out why pointers are duplicated
-		System.out.println(pointers);
-		ret.set("pointers", new ListType(new ArrayList<SerializedDataType>(pointers)));
+		ListType pointerList = new ListType();
+		pointers.forEach((p) -> pointerList.values.add(new PointerValue(p)));
+		ret.set("pointers", pointerList);
 		for (Runnable r : functionsToRun) {
 			r.run();
 		}
