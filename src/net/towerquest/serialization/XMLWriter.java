@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import net.towerquest.serialization.prims.*;
 
 public class XMLWriter extends StringDataWriter {
-	// fun fact: i specifically called the parameter "s", not "str" or "string", so that the .replace function would be aligned
 	@Override
 	public String escape(String s) {
 		return s.replace("&", "&amp;")

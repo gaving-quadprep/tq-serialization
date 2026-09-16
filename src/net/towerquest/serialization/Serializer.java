@@ -4,16 +4,19 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import net.towerquest.serialization.prims.*;
 
 public class Serializer {
 	
-	private List<TypeHandler<?,?,?>> typeHandlers = new ArrayList<TypeHandler<?,?,?>>();
+	public final List<TypeHandler<?,?,?>> typeHandlers = new ArrayList<TypeHandler<?,?,?>>();
 	private List<Runnable> functionsToRun = new ArrayList<Runnable>();
 	private Map<Object, SerializedDataType> objectMap = new HashMap<Object, SerializedDataType>();
-	private ListType pointers = new ListType();
+	private Set<PointerValue> pointers = new HashSet<>();
 	private Map<Class<? extends Serializable>, String> registry = new HashMap<Class<? extends Serializable>, String>();
 	
 	// TODO use registry
@@ -32,7 +35,7 @@ public class Serializer {
 				SerializedDataType ret = th.encode(dc, obj, this);
 				if (ret instanceof PointerValue) {
 					// pointer to the pointer
-					pointers.values.add(new PointerValue(ret));
+					pointers.add(new PointerValue(ret));
 				} else {
 					objectMap.putIfAbsent(obj, ret);
 				}
@@ -73,22 +76,26 @@ public class Serializer {
 	}
 	
 	public SerializedData serialize(Serializable s) {
-		objectMap.clear();
-		functionsToRun.clear();
-		pointers = new ListType();
 		SerializedData ret = new SerializedData();
 		ret.set("main", serializeObject(s));
-		ret.set("pointers", pointers);
+		// TODO figure out why pointers are duplicated
+		System.out.println(pointers);
+		ret.set("pointers", new ListType(new ArrayList<SerializedDataType>(pointers)));
 		for (Runnable r : functionsToRun) {
 			r.run();
 		}
+		// moved down here to avoid memory leak
+		objectMap.clear();
+		functionsToRun.clear();
+		pointers.clear();
 		return ret;
 	}
 	
 	public Serializer() {
 		typeHandlers.add(new PointerTypeHandler());
-		typeHandlers.add(new ListTypeHandler());
 		typeHandlers.add(new PrimitiveTypeHandler());
+		typeHandlers.add(new ByteArrayTypeHandler()); // must come before ListTypeHandler
+		typeHandlers.add(new ListTypeHandler());
 		typeHandlers.add(new SerializableObjectTypeHandler());
 		typeHandlers.add(new EnumTypeHandler());
 		typeHandlers.add(new ColorTypeHandler());
