@@ -29,7 +29,9 @@ public class SerializationTests {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
 			dataWriter.write(data, output);
-			// TODO it freezes hedre, not sure why
+			String first = output.toString();
+			System.out.println(first);
+			// TODO it freezes here, not sure why
 			SerializedData data2 = dataReader.read(new ByteArrayInputStream(output.toByteArray()));
 			ExampleObj1 otherObject = deserializer.deserialize(data2, ExampleObj1.class);
 			SerializedData data3 = serializer.serialize(otherObject);

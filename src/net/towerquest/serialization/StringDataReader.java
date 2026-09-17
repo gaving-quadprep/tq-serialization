@@ -11,9 +11,12 @@ public abstract class StringDataReader implements DataReader {
 	public abstract SerializedData readObject(Reader reader) throws IOException;
 	public abstract SerializedDataType readData(Reader reader) throws IOException;
 	public abstract SerializedData read(Reader reader) throws IOException;
-	
+
 	public boolean isWhitespace(char c, boolean newlinesAllowed) {
 		return c == ' ' || c == '\t' || ((c == '\n' || c == '\r') && newlinesAllowed);
+	}
+	public boolean isWhitespace(char c) {
+		return isWhitespace(c, true);
 	}
 
 	//moves the position to the end of the whitespace

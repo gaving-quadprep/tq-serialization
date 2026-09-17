@@ -1,5 +1,6 @@
 package net.towerquest.serialization;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -103,6 +104,10 @@ public class JSONReader extends StringDataReader {
 	
 	@Override
 	public SerializedData readObject(Reader reader) throws IOException {
+		System.out.println("object start");
+		reader.mark(999999);
+		System.out.println(((BufferedReader)reader).readLine());
+		reader.reset();
 		char c = skipWhitespace(reader, true);
 		assert c == '{';
 		SerializedData sd = new SerializedData();
@@ -124,7 +129,7 @@ public class JSONReader extends StringDataReader {
 			nextChar = skipWhitespace(reader, true);
 			assert nextChar == ',' || nextChar == '}' : "Invalid character ("+nextChar+")";
 		} while (nextChar != '}');
-
+		System.out.println("object end");
 		return sd;
 	}
 	
