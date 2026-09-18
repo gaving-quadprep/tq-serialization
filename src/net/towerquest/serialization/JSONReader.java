@@ -60,9 +60,7 @@ public class JSONReader extends StringDataReader {
 	}
 	
 	public void setPointer(SerializedDataType data, String pointer, SerializedDataType value) {
-		System.out.println(pointer);
 		String[] strs = splitPointer(pointer);
-		System.out.println(strs[0]);
 		if (strs[2].length() == 0) {
 			if (data instanceof SerializedData) {
 				((SerializedData)data).set(strs[0], value);
@@ -77,7 +75,9 @@ public class JSONReader extends StringDataReader {
 	}
 	
 	public String readString(Reader reader) throws IOException {
-		assert reader.read() == '"';
+		char chr = (char) reader.read();
+		assert chr == '"';
+		
 		StringBuilder sb = new StringBuilder();
 		int backslashCount = 0;
 		while (true) {
@@ -91,7 +91,6 @@ public class JSONReader extends StringDataReader {
 			}
 			sb.append((char)nextChar);
 		}
-		
 		return sb.toString()
 				.replace("\\\"", "\"")
 				.replace("\\b", "\b")
@@ -104,10 +103,6 @@ public class JSONReader extends StringDataReader {
 	
 	@Override
 	public SerializedData readObject(Reader reader) throws IOException {
-		System.out.println("object start");
-		reader.mark(999999);
-		System.out.println(((BufferedReader)reader).readLine());
-		reader.reset();
 		char c = skipWhitespace(reader, true);
 		assert c == '{';
 		SerializedData sd = new SerializedData();
@@ -129,7 +124,6 @@ public class JSONReader extends StringDataReader {
 			nextChar = skipWhitespace(reader, true);
 			assert nextChar == ',' || nextChar == '}' : "Invalid character ("+nextChar+")";
 		} while (nextChar != '}');
-		System.out.println("object end");
 		return sd;
 	}
 	
@@ -214,8 +208,6 @@ public class JSONReader extends StringDataReader {
 					SerializedDataType pointerString = getPointer(ret, pointerLocation);
 					if (pointerString instanceof PrimString) {
 						PointerValue replacement = new PointerValue(getPointer(ret, ((PrimString)pointerString).value));
-						System.out.println(pointerString);
-						System.out.println(pointerLocation);
 						setPointer(ret, pointerLocation, replacement);
 					}
 				}
