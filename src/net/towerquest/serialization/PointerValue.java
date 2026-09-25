@@ -16,6 +16,11 @@ public class PointerValue implements SerializedDataType {
 	}
 	
 	@Override
+	public int hashCode() {
+		return System.identityHashCode(value);
+	}
+	
+	@Override
 	public String toString() {
 		String str = "null";
 		if (value != null)

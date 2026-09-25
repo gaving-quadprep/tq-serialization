@@ -23,6 +23,11 @@ public class PointerTo<T> implements Serializable {
 	}
 	
 	@Override
+	public int hashCode() {
+		return value.hashCode();
+	}
+	
+	@Override
 	public SerializedDataType serialize(Serializer serializer) {
 		DataContext dc;
 		try {
