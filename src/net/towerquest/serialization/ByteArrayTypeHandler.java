@@ -49,6 +49,7 @@ public class ByteArrayTypeHandler implements TypeHandler<Object, ByteArrayType, 
 			Class<?> wrapperType = Primitive.getPrimitiveClassFromType(componentType);
 			int len = Array.getLength(obj);
 			ByteBuffer bb = ByteBuffer.allocate(len * Primitive.byteSize(componentType));
+			bb.flip();
 			for (int i = 0; i < len; i++) {
 				Object obj2 = Array.get(obj, i);
 				if (wrapperType == Boolean.class)
@@ -75,13 +76,57 @@ public class ByteArrayTypeHandler implements TypeHandler<Object, ByteArrayType, 
 
 	@Override
 	public boolean canDecode(DataContext dc, SerializedDataType data) {
-		// TODO Auto-generated method stub
-		return false;
+		if (!dc.clazz.isArray())
+			return false;
+		Class<?> componentType = dc.clazz.getComponentType();
+		return componentType.isPrimitive() || Number.class.isAssignableFrom(componentType);
 	}
 
 	@Override
-	public byte[] decode(DataContext dc, ByteArrayType data, Deserializer parent) {
-		// TODO Auto-generated method stub
+	public Object decode(DataContext dc, ByteArrayType data, Deserializer parent) {
+		if (dc.clazz.equals(byte[].class)) {
+			return data.value;
+		}
+		if (dc.clazz.equals(Byte[].class)) {
+			int len = data.value.length;
+			Byte[] array = new Byte[len];
+			for (int i = 0; i < len; i++) {
+				array[i] = data.value[i];
+			}
+			return array;
+		}
+		if (dc.clazz.isArray()) {
+			Class<?> componentType = dc.clazz.getComponentType();
+			if (componentType.isPrimitive() || Primitive.isPrimitiveWrapper(componentType)) {
+				Class<?> wrapperType = Primitive.getPrimitiveClassFromType(componentType);
+				ByteBuffer bb = ByteBuffer.wrap(data.value);
+				bb.position(0);
+				int len = data.value.length / Primitive.byteSize(componentType);
+				// this has to be Object and not Object[]
+				Object array = new int[len];
+				for (int i = 0; i < len; i++) {
+					Object obj = null;
+					if (wrapperType == Boolean.class)
+						obj = bb.get() != 0;
+					if (wrapperType == Byte.class)
+						obj = bb.get();
+					if (wrapperType == Character.class)
+						obj = bb.getChar();
+					if (wrapperType == Double.class)
+						obj = bb.getDouble();
+					if (wrapperType == Float.class)
+						obj = bb.getFloat();
+					if (wrapperType == Integer.class)
+						obj = bb.getInt();
+					if (wrapperType == Long.class)
+						obj = bb.getLong();
+					if (wrapperType == Short.class)
+						obj = bb.getShort();
+					Array.set(array, i, obj);
+				}
+			}
+		}
+		
 		return null;
 	}
 
