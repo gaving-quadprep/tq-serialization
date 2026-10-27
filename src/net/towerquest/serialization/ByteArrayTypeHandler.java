@@ -2,10 +2,12 @@ package net.towerquest.serialization;
 
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
+import java.util.Base64;
 
+import net.towerquest.serialization.prims.PrimString;
 import net.towerquest.serialization.prims.Primitive;
 
-public class ByteArrayTypeHandler implements TypeHandler<Object, ByteArrayType, ByteArrayType> {
+public class ByteArrayTypeHandler implements TypeHandler<Object, ByteArrayType, SerializedDataType> {
 	@Override
 	public boolean canEncode(DataContext dc, Object obj) {
 		boolean hasAnnotation = false;
@@ -46,10 +48,9 @@ public class ByteArrayTypeHandler implements TypeHandler<Object, ByteArrayType, 
 		}
 		Class<?> componentType = obj.getClass().getComponentType();
 		if (componentType.isPrimitive() || Primitive.isPrimitiveWrapper(componentType)) {
-			Class<?> wrapperType = Primitive.getPrimitiveClassFromType(componentType);
+			Class<?> wrapperType = componentType.isPrimitive() ? Primitive.primitiveToWrapper(componentType) : componentType;
 			int len = Array.getLength(obj);
 			ByteBuffer bb = ByteBuffer.allocate(len * Primitive.byteSize(componentType));
-			bb.flip();
 			for (int i = 0; i < len; i++) {
 				Object obj2 = Array.get(obj, i);
 				if (wrapperType == Boolean.class)
@@ -83,15 +84,20 @@ public class ByteArrayTypeHandler implements TypeHandler<Object, ByteArrayType, 
 	}
 
 	@Override
-	public Object decode(DataContext dc, ByteArrayType data, Deserializer parent) {
+	public Object decode(DataContext dc, SerializedDataType data, Deserializer parent) {
+		ByteArrayType b = null;
+		if (data instanceof ByteArrayType)
+			b = (ByteArrayType) data;
+		if (data instanceof PrimString)
+			b = new ByteArrayType(Base64.getDecoder().decode(((PrimString)data).value));
 		if (dc.clazz.equals(byte[].class)) {
-			return data.value;
+			return b.value;
 		}
 		if (dc.clazz.equals(Byte[].class)) {
-			int len = data.value.length;
+			int len = b.value.length;
 			Byte[] array = new Byte[len];
 			for (int i = 0; i < len; i++) {
-				array[i] = data.value[i];
+				array[i] = b.value[i];
 			}
 			return array;
 		}
@@ -99,9 +105,9 @@ public class ByteArrayTypeHandler implements TypeHandler<Object, ByteArrayType, 
 			Class<?> componentType = dc.clazz.getComponentType();
 			if (componentType.isPrimitive() || Primitive.isPrimitiveWrapper(componentType)) {
 				Class<?> wrapperType = Primitive.getPrimitiveClassFromType(componentType);
-				ByteBuffer bb = ByteBuffer.wrap(data.value);
+				ByteBuffer bb = ByteBuffer.wrap(b.value);
 				bb.position(0);
-				int len = data.value.length / Primitive.byteSize(componentType);
+				int len = b.value.length / Primitive.byteSize(componentType);
 				// this has to be Object and not Object[]
 				Object array = new int[len];
 				for (int i = 0; i < len; i++) {
